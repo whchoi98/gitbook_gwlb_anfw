@@ -1,8 +1,8 @@
 ---
-description: 'update : 2021-08-01'
+description: 'update : 2022-06-12'
 ---
 
-# GWLB
+# GWLB/ANFW Workshop
 
 ## 목차&#x20;
 
@@ -10,11 +10,11 @@ description: 'update : 2021-08-01'
 
 ### :ballot\_box\_with\_check:[사전 준비 (10min)](prepare.md)
 
-### :ballot\_box\_with\_check:[GWLB Design 1 (1h)](gwlb-design1.md)
+### :ballot\_box\_with\_check:[GWLB Design 1 (1h)](broken-reference)
 
-### :ballot\_box\_with\_check:[GWLB Design 2 (1h)](gwlb-design2.md)
+### :ballot\_box\_with\_check:[GWLB Design 2 (1h)](broken-reference)
 
-### :ballot\_box\_with\_check:[GWLB Design 3 (1h)](gwlb-design3.md)
+### :ballot\_box\_with\_check:[GWLB Design 3 (1h)](broken-reference)
 
 ### :ballot\_box\_with\_check:[GWLB Design 4 (1h)](gwlb-design4.md)
 
@@ -24,13 +24,7 @@ description: 'update : 2021-08-01'
 
 #### :notebook\_with\_decorative\_cover: Markdown code
 
-{% embed url="https://github.com/whchoi98/aws-gwlb/blob/master/SUMMARY.md" %}
-
 #### &#x20;:notebook\_with\_decorative\_cover: Lab - Cloudformation code (yaml files)
-
-{% embed url="https://github.com/whchoi98/gwlb" %}
-
-#### &#x20;:woman\_raising\_hand: Slack Channel - [https://whchoi-hol.slack.com/archives/C01Q683FNDV](https://whchoi-hol.slack.com/archives/C01RARPDKGQ)
 
 
 

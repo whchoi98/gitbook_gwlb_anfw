@@ -2,7 +2,7 @@
 description: 'Update : 2022-06-12'
 ---
 
-# GWLB Design
+# GWLB/ANFW Super LAB
 
 ## 목표 구성 개요
 

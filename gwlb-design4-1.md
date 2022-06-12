@@ -1,8 +1,8 @@
 ---
-description: 'Update : 2022-06-12'
+description: 'Update : 2022-06-12/ 1h /Cloudformation CLI 배포로 변경'
 ---
 
-# GWLB Design
+# ANFW Design
 
 ## 목표 구성 개요
 
