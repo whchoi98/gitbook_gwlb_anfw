@@ -24,6 +24,12 @@ description: 'Update : 2021-03-31/ 20min'
 
 AWS Cloud9은 브라우저만으로 코드를 작성, 실행 및 디버깅할 수 있는 클라우드 기반 IDE(통합 개발 환경)입니다. 코드 편집기, 디버거 및 터미널이 포함되어 있습니다. Cloud9은 JavaScript, Python, PHP를 비롯하여 널리 사용되는 프로그래밍 언어를 위한 필수 도구가 사전에 패키징되어 제공되므로, 새로운 프로젝트를 시작하기 위해 파일을 설치하거나 개발 머신을 구성할 필요가 없습니다. Cloud9 IDE는 클라우드 기반이므로, 인터넷이 연결된 머신을 사용하여 사무실, 집 또는 어디서든 프로젝트 작업을 할 수 있습니다. 또한, Cloud9은 서버리스 애플리케이션을 개발할 수 있는 원활한 환경을 제공하므로 손쉽게 서버리스 애플리케이션의 리소스를 정의하고, 디버깅하고, 로컬 실행과 원격 실행 간에 전환할 수 있습니다. Cloud9에서는 개발 환경을 팀과 신속하게 공유할 수 있으므로 프로그램을 연결하고 서로의 입력 값을 실시간으로 추적할 수 있습니다.
 
+:clapper: 아래 동영상 링크에서 구성방법을 확인 할 수 있습니다.&#x20;
+
+{% embed url="https://youtu.be/Jdzj0fSA4YU" %}
+
+
+
 ### Cloud9 구성
 
 Cloud9을 실행하기 위해 아래와 같이 AWS 관리콘솔에서 **`"Cloud9"`** 을 입력합니다.
@@ -96,7 +102,7 @@ ssh-keygen
 key이름은 gwlbkey 로 설정합니다.
 
 ```
-mykey
+gwlbkey
 ```
 
 아래와 같이 ssh key가 구성됩니다.
@@ -104,7 +110,7 @@ mykey
 ```
 ssh-keygen
 Generating public/private rsa key pair.
-Enter file in which to save the key (/home/ec2-user/.ssh/id_rsa): mykey
+Enter file in which to save the key (/home/ec2-user/.ssh/id_rsa): gwlbkey
 Enter passphrase (empty for no passphrase): 
 Enter same passphrase again: 
 Your identification has been saved in gwlbkey.
@@ -128,8 +134,8 @@ The key's randomart image is:
 Cloud9 Terminal 에서 생성되는 EC2들에 대한 접근을 할 수 있도록 아래와 같이 구성합니다.
 
 ```
-mv ~/environment/gwlbkey ~/environment/mykey.pem
-chmod 400 ./mykey.pem
+mv ~/environment/gwlbkey ~/environment/gwlbkey.pem
+chmod 400 ./gwlbkey.pem
 ```
 
 이제 생성된 Public Key를 계정으로 업로드 합니다. **`"--region {AWS Region}"`** 리전 옵션에서 각 리전을 지정하게 되면 해당 리전으로 생성한 Public Key를 전송합니다. 아래에서는 도쿄,서울, 버지니아, 오레곤 리전으로 전송하는 예제입니다.
