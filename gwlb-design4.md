@@ -10,11 +10,7 @@ description: 'Update : 2022-06-12'
 
 이러한 구성은 VPC Endpoint를 특정 VPC에 구성하고, TransitGateway를 통해 GWLB에 VPC Endpoint Service를 연결하는 중앙집중 구조입니다.
 
-GWLB Design2와 다른 점은 ALB(Application Load Balancer)를 GWLB와 연계하는 VPC에 배치해서, 내부의 VPC01,02의 서비스들이 외부에 제공하도록 한다는 점입니다.
-
-아래 그림은 목표 구성도 입니다.
-
-{% embed url="https://youtu.be/Es35y0mtT0w" %}
+ALB(Application Load Balancer)를 GWLB와 연계하는 VPC에 배치해서, 내부의 VPC01,02의 서비스들이 외부에 제공하도록 합니다
 
 ![](<.gitbook/assets/image (147).png>)
 
@@ -64,8 +60,6 @@ aws cloudformation deploy \
   --capabilities CAPABILITY_NAMED_IAM
   
 ```
-
-![](<.gitbook/assets/image (152).png>)
 
 3\~4분 후에 GWLBVPC가 완성됩니다.
 
