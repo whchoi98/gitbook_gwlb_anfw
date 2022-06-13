@@ -6,29 +6,21 @@ description: 'Update : 2021-03-31/ 20min'
 
 ## 시작에 앞서&#x20;
 
-이 Lab에서는 GWLB와 연동되는 디자인을 4가지로 구성합니다.
+GWLB & ANFW(AWS Network Firewall) Workshop은 AWS 워크로드를 보호하기 위해서, TGW를 활용한 Centralized Design 방법으로 GWLB와 ANFW을 구성하는 방법을 제공합니다
 
-#### Design 1 - VPC 에서 외부 전송 트래픽에 대해 GWLB VPC Endpoint와 Private Link를 사용해서 구성합니다.
-
-#### Design 2 - VPC 에서 외부 전송 트래픽에 대해 TransitGateway를 기반으로 구성합니다. TransitGateway와 연동된 VPC에서 GWLB VPC Endpoint Link를 사용해서 보안 어플라이언스로 연동됩니다.
-
-#### Design 3 - VPC 에서 외부 전송 트래픽에 대해 GWLB VPC Endpoint와 Private Link를 사용해서 구성합니다. 외부에 서비스를 제공하기 위해 ALB를 구성합니다. 내부 Private Subnet 자원들의 패치를 위해 NAT Gateway를 구성합니다.
-
-#### Design 4 - VPC 에서 외부 전송 트래픽에 대해 TransitGateway를 기반으로 구성합니다. 외부에 서비스를 제공하기 위해 ALB를 구성합니다. 내부 Private Subnet 자원들의 패치를 위해 NAT Gateway를 구성합니다.
+#### GWLB Design  -  TransitGateway를 기반으로 Centralized 기반으로 구성합니다. 외부에 서비스를 제공하기 위해 ALB를 구성합니다. 내부 Private Subnet 자원들의 패치를 위해 NAT Gateway를 구성합니다.
 
 보안 어플라이언스는 상용 방화벽이나 기타 어플라이언스를 연동 가능합니다. 이 랩에서는 리눅스 기반 IPTABLE을 사용합니다.
+
+#### ANFW Design  -  TransitGateway를 기반으로 Centralized 기반으로 구성합니다. 외부에 서비스를 제공하기 위해 ALB를 구성합니다. 내부 Private Subnet 자원들의 패치를 위해 NAT Gateway를 구성합니다.
+
+AWS의 완전관리형 방화벽을 구성해서, 내외부 보안 정책을 구현해 봅니다. &#x20;
 
 ## Cloud9 구성
 
 ### Cloud9 소개&#x20;
 
 AWS Cloud9은 브라우저만으로 코드를 작성, 실행 및 디버깅할 수 있는 클라우드 기반 IDE(통합 개발 환경)입니다. 코드 편집기, 디버거 및 터미널이 포함되어 있습니다. Cloud9은 JavaScript, Python, PHP를 비롯하여 널리 사용되는 프로그래밍 언어를 위한 필수 도구가 사전에 패키징되어 제공되므로, 새로운 프로젝트를 시작하기 위해 파일을 설치하거나 개발 머신을 구성할 필요가 없습니다. Cloud9 IDE는 클라우드 기반이므로, 인터넷이 연결된 머신을 사용하여 사무실, 집 또는 어디서든 프로젝트 작업을 할 수 있습니다. 또한, Cloud9은 서버리스 애플리케이션을 개발할 수 있는 원활한 환경을 제공하므로 손쉽게 서버리스 애플리케이션의 리소스를 정의하고, 디버깅하고, 로컬 실행과 원격 실행 간에 전환할 수 있습니다. Cloud9에서는 개발 환경을 팀과 신속하게 공유할 수 있으므로 프로그램을 연결하고 서로의 입력 값을 실시간으로 추적할 수 있습니다.
-
-:clapper: 아래 동영상 링크에서 구성방법을 확인 할 수 있습니다.&#x20;
-
-{% embed url="https://youtu.be/Jdzj0fSA4YU" %}
-
-
 
 ### Cloud9 구성
 
@@ -102,7 +94,7 @@ ssh-keygen
 key이름은 gwlbkey 로 설정합니다.
 
 ```
-gwlbkey
+mykey
 ```
 
 아래와 같이 ssh key가 구성됩니다.
@@ -110,7 +102,7 @@ gwlbkey
 ```
 ssh-keygen
 Generating public/private rsa key pair.
-Enter file in which to save the key (/home/ec2-user/.ssh/id_rsa): gwlbkey
+Enter file in which to save the key (/home/ec2-user/.ssh/id_rsa): mykey
 Enter passphrase (empty for no passphrase): 
 Enter same passphrase again: 
 Your identification has been saved in gwlbkey.
@@ -131,31 +123,31 @@ The key's randomart image is:
 +----[SHA256]-----+
 ```
 
-Cloud9 Terminal 에서 생성되는 EC2들에 대한 접근을 할 수 있도록 아래와 같이 구성합니다.
+Cloud9 Terminal 에서 생성되는 Public EC2들에 대한 접근을 할 수 있도록 아래와 같이 구성합니다.
 
 ```
-mv ~/environment/gwlbkey ~/environment/gwlbkey.pem
-chmod 400 ./gwlbkey.pem
+mv ~/environment/mkey ~/environment/mykey.pem
+chmod 400 ./mykey.pem
 ```
 
 이제 생성된 Public Key를 계정으로 업로드 합니다. **`"--region {AWS Region}"`** 리전 옵션에서 각 리전을 지정하게 되면 해당 리전으로 생성한 Public Key를 전송합니다. 아래에서는 도쿄,서울, 버지니아, 오레곤 리전으로 전송하는 예제입니다.
 
 ```
 #Tokoy Region 전송 
-aws ec2 import-key-pair --key-name "gwlbkey" --public-key-material fileb://gwlbkey.pub --region ap-northeast-1
+aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://gwlbkey.pub --region ap-northeast-1
 #Seoul Region 전송
-aws ec2 import-key-pair --key-name "gwlbkey" --public-key-material fileb://gwlbkey.pub --region ap-northeast-2
+aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://gwlbkey.pub --region ap-northeast-2
 #버지니아 리전 전송
-aws ec2 import-key-pair --key-name "gwlbkey" --public-key-material fileb://gwlbkey.pub --region us-east-1
+aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://gwlbkey.pub --region us-east-1
 #오레곤 리전 전송
-aws ec2 import-key-pair --key-name "gwlbkey" --public-key-material fileb://gwlbkey.pub --region us-west-2
+aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://gwlbkey.pub --region us-west-2
 
 ```
 
 아래와 같이 업로드가 완료됩니다.
 
 ```
-whchoi:~/environment $ aws ec2 import-key-pair --key-name "gwlbkey" --public-key-material fileb://gwlbkey.pub --region ap-northeast-2
+ $ aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://gwlbkey.pub --region ap-northeast-2
 {
     "KeyFingerprint": "xx:xx:xx:xx:xx:65:3a:70:fb:b1:fa:dd:6c:59:c6:9e",
     "KeyName": "gwlbkey",
@@ -170,5 +162,22 @@ whchoi:~/environment $ aws ec2 import-key-pair --key-name "gwlbkey" --public-key
 
 ![](<.gitbook/assets/image (16).png>)
 
-이제 사전 구성이 완료되었습니다.
+## Session Manager Plugin 설치
+
+Session Manager는 AWS Systems Manager의 일부 기능입니다. Session Manager에서, EC2 인스턴스, 엣지 디바이스, 온프레미스 서버 및 가상 머신(VM)을 관리할 수 있습니다. 브라우저 기반 셸 또는 AWS Command Line Interface(AWS CLI)을 사용할 수 있습니다. Session Manager는 인바운드 포트를 열고, 배스천 호스트를 유지하고, SSH 키를 관리할 필요 없이 보안성과 감사 가능성을 갖춘 노드 관리 기능을 제공합니다.&#x20;
+
+또한 Session Manager를 통해 노드에 대한 제어된 액세스를 요구하는 회사 정책, 엄격한 보안 관행을 손쉽게 준수하고, 관리형 노드 액세스 세부 정보가 포함된 완전히 감사 가능한 로그를 제공합니다
+
+Workshop에서는 Cloud9에 아래와 같이 Plugin을 설치하면, Private Subnet의 인스턴스에 접속 할 수 있습니다
+
+```
+#session manager plugin 설치
+cd ~/environment
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
+sudo yum install -y session-manager-plugin.rpm
+git clone https://github.com/whchoi98/useful-shell.git
+
+```
+
+**이제 사전 구성이 완료되었습니다.**
 

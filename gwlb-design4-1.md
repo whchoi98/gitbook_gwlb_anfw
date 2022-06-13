@@ -6,15 +6,13 @@ description: 'Update : 2022-06-12/ 1h /Cloudformation CLI 배포로 변경'
 
 ## 목표 구성 개요
 
-2개의 각 워크로드 VPC (VPC01,02)은 Account내에 구성된 GWLB 기반의 보안 VPC를 통해서 내, 외부 트래픽을 처리하는 구성입니다. GWLB 기반의 보안 VPC는 2개의 AZ에 4개의 가상 Appliance가 로드밸런싱을 통해 처리 됩니다.
+2개의 각 워크로드 VPC (VPC01,02)은 Account내에 구성된 ANFW 기반의 보안 VPC를 통해서 내, 외부 트래픽을 처리하는 구성입니다. GWLB 기반의 보안 VPC는 2개의 AZ에 4개의 가상 Appliance가 로드밸런싱을 통해 처리 됩니다.
 
-이러한 구성은 VPC Endpoint를 특정 VPC에 구성하고, TransitGateway를 통해 GWLB에 VPC Endpoint Service를 연결하는 중앙집중 구조입니다.
+이러한 구성은 VPC Endpoint를 특정 VPC에 구성하고, TransitGateway를 통해 ANFW에 VPC Endpoint Service를 연결하는 중앙집중 구조입니다.
 
-GWLB Design2와 다른 점은 ALB(Application Load Balancer)를 GWLB와 연계하는 VPC에 배치해서, 내부의 VPC01,02의 서비스들이 외부에 제공하도록 한다는 점입니다.
+ALB(Application Load Balancer)를 ANFW를 연계하는 VPC에 배치해서, 내부의 VPC01,02의 서비스들이 외부에 제공하도록 할 수 있습니다
 
 아래 그림은 목표 구성도 입니다.
-
-{% embed url="https://youtu.be/Es35y0mtT0w" %}
 
 ![](<.gitbook/assets/image (147).png>)
 
@@ -36,57 +34,13 @@ git clone https://github.com/whchoi98/gwlb.git
 3. VPC01.yml, VPC02.yml
 4. GWLBTGW.yml
 
-{% hint style="info" %}
-계정에서 VPC 기본 할당량은 Default VPC 포함 5개입니다. 이 랩에서는 VPC03 은 생성하지 않습니다.
-{% endhint %}
 
-### 2.GWLB VPC 배포
 
-Cloud9 터미널에서 GWLBVPC를 배포합니다
+### 2.N2SVPC 배포
 
-스택 세부 정보 지정에서 , 스택이름과 VPC Parameters를 지정합니다. 대부분 기본값을 사용하면 됩니다.
+외부 인터넷으로 통신하는 North-South 트래픽 처리를 하는 VPC를 생성합니다. 해당 VPC는 ANFW과 연계합니다
 
-* 스택이름 : GWLBVPC
-* AvailabilityZone A : ap-northeast-2a
-* AvailabilityZone B : ap-northeast-2b
-* VPCCIDRBlock: 10.254.0.0/16
-* PublicSubnetABlock: 10.254.11.0/24
-* PublicSubnetBBlock: 10.254.12.0/24
-* InstanceTyep: t3.small
-* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다. (예. gwlbkey)
-
-```
-aws cloudformation deploy \
-  --region ap-northeast-2 \
-  --stack-name "GWLBVPC" \
-  --template-file "/home/ec2-user/environment/gwlb/Case4/1.Case4-GWLBVPC.yml" \
-  --parameter-overrides "KeyPair=$KeyName" \
-  --capabilities CAPABILITY_NAMED_IAM
-  
-```
-
-![](<.gitbook/assets/image (152).png>)
-
-3\~4분 후에 GWLBVPC가 완성됩니다.
-
-**`AWS 관리콘솔 - VPC - 가상 프라이빗 클라우드 - 엔드포인트 서비스`** 를 선택합니다. Cloudformation을 통해서 VPC Endpoint 서비스가 이미 생성되어 있습니다. 이것을 선택하고 \*\*`세부 정보`\*\*를 확인합니다.
-
-서비스 이름을 복사해 둡니다. 뒤에서 생성할 VPC들의 Cloudformation에서 사용할 것입니다.
-
-![](<.gitbook/assets/image (153).png>)
-
-VPCEndpointServiceName 값을 아래에서 처럼 환경변수에 저장해 둡니다. &#x20;
-
-```
-export VPCEndpointServiceName=com.amazonaws.vpce.ap-northeast-2.vpce-svc-05ab1bb335b43d371
-
-```
-
-### 3.N2SVPC 배포
-
-외부 인터넷으로 통신하는 North-South 트래픽 처리를 하는 VPC를 생성합니다.
-
-N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. 다운로드 받은 Yaml 파일들 중에 N2SVPC 선택해서 생성합니다.스택 이름을 생성하고, GWLBVPC의 VPC Endpoint 서비스 이름을 **`"VPCEndpointServiceName"`** 에 입력합니다. 또한 나머지 파라미터들도 입력합니다. 대부분 기본값을 사용합니다.
+N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. 다운로드 받은 Yaml 파일들 중에 N2SVPC 선택해서 생성합니다.스택 이름을 생성하고, 대부분 기본값을 사용합니다.
 
 * 스택이름 : N2SVPC
 * AvailabilityZone A : ap-northeast-2a
@@ -103,7 +57,6 @@ N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. �
 * DefaultRouteBlock: 0.0.0.0/0 (Default Route Table 주소를 선언합니다.)
 * VPC1CIDRBlock : 10.1.0.0/16 (VPC1의 CIDR Block 주소를 선언합니다.)
 * VPC2CIDRBlock: 10.2.0.0/16 (VPC2의 CIDR Block 주소를 선언합니다.)
-* VPCEndpointServiceName : 앞서 복사해둔 GWLBVPC의 VPC endpoint service name을 입력합니다.
 * InstanceTyep: t3.small
 * KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. gwlbkey)
 
@@ -114,7 +67,6 @@ aws cloudformation deploy \
   --template-file "/home/ec2-user/environment/gwlb/Case4/2.Case4-N2SVPC.yml" \
   --parameter-overrides \
     "KeyPair=$KeyName" \
-    "VPCEndpointServiceName=$VPCEndpointServiceName" \
   --capabilities CAPABILITY_NAMED_IAM
 ```
 
@@ -123,7 +75,7 @@ aws cloudformation deploy \
 **나머지 VPC01,VPC02,VPC03 의 Cloudformation Yaml 파일을 업로드 합니다.**
 
 {% hint style="info" %}
-VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC로 사용 중이고, 4개를 사용 가능하므로 일반 계정에서는 GWLBVPC, N2SVPC, VPC01,VPC02 까지만 생성 가능합니다.
+VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC로 사용 중이고, 4개를 사용 가능하므로 일반 계정에서는 N2SVPC, VPC01,VPC02 까지만 생성 가능합니다.
 {% endhint %}
 
 * 스택이름 : VPC01,VPC02
@@ -188,7 +140,7 @@ aws cloudformation deploy \
 
 ### 5. TransitGateway 배포
 
-N2SVPC, VPC01,VPC02을 연결하기 위한 TransitGateway를 배포합니다. 앞서 git을 통해 다운 받은 파일 중 GWLBTGW.yml 파일을 Cloudformation을 통해서 배포합니다.
+N2SVPC, VPC01,VPC02을 연결하기 위한 TransitGateway를 배포합니다. 앞서 git을 통해 다운 받은 파일 중 ANFWTGW.yml 파일을 Cloudformation을 통해서 배포합니다.
 
 `Default Route Table`과 **`VPC01, VPC02 CIDR`** 주소를 입력합니다. (기본 값으로 설정되어 있습니다.)
 
