@@ -351,7 +351,7 @@ ssh -i ~/environment/mykey.pem ec2-user@$Appliance4
 각 Appliance에서 아래 명령을 통해 , GWLB IP와 어떻게 매핑되었는지 확인합니다.
 
 ```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance1
+ssh -i ~/environment/mykey.pem ec2-user@$Appliance1
 sudo iptables -L -n -v -t nat
 ```
 
@@ -379,7 +379,7 @@ Chain POSTROUTING (policy ACCEPT 20849 packets, 1611K bytes)
 AZ B에 배포된 Appliance는 다음과 같이 출력됩니다.
 
 ```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance3
+ssh -i ~/environment/mykey.pem ec2-user@$Appliance3
 sudo iptables -L -n -v -t nat
 
 ```
@@ -567,7 +567,7 @@ PING aws.com (99.86.206.123) 56(84) bytes of data.
 Cloud9 터미널 1
 
 ```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance1
+#Appliance1 terminal
 sudo tcpdump -nvv 'port 6081' | grep 'ICMP'
 
 ```
@@ -575,7 +575,7 @@ sudo tcpdump -nvv 'port 6081' | grep 'ICMP'
 Cloud9 터미널 2
 
 ```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance2
+#Appliance2 terminal
 sudo tcpdump -nvv 'port 6081' | grep 'ICMP'
 
 ```
@@ -704,14 +704,20 @@ VPC01-Private-Instance, VPC02-Private-Instance를 각각 실행합니다.
 
 이제 N2SVPC에서 VPC01,VPC02의 인스턴스 로드밸런서를 위한 ALB 구성을 하고, Target Group을 각각 VPC01,02로 지정합니다.
 
-**`AWS 관리콘솔 - EC2 - 로드밸런서 - Application Load Balancer`**를 선택합니다.
+**`AWS 관리콘솔 - EC2 - 로드밸런서 - Application Load Balancer`**를 선택하고 **`로드 밸런서 생성`**을 선택합니다.  Application Loadbalancer를 선택하고 생성합니다
 
-* **`이름 : "ALB-VPC01-TG"`** 와 같은 이름을 입력합니다.
+![](<.gitbook/assets/image (203).png>)
+
+기본구성&#x20;
+
+* **`이름 : "ALB-VPC01"`** 와 같은 이름을 입력합니다.
 * **`체계 : "인터넷 경계"`** 를 선택합니다.
 * **`VPC - "N2SVPC"`** 를 선택합니다.
 * **`가용영역 - "N2SVPC-Public-Subnet-A,B"`**를 선택합니다.
 
-![](<.gitbook/assets/image (193).png>)
+
+
+
 
 보안 그룹 구성에서 기존 보안 그룹 **`"ALBSecuritryGroup"`**을 선택합니다. 이미 앞서 Cloudformation Stack에서 생성했습니다.
 
