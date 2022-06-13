@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2021-03-31/ 20min'
+description: 'Update : 2022-06-12/ 20min'
 ---
 
 # 사전 준비
@@ -30,9 +30,9 @@ Cloud9을 실행하기 위해 아래와 같이 AWS 관리콘솔에서 **`"Cloud9
 
 **`AWS 관리 콘솔 - Cloud9 - Create environment`**를 선택합니다.
 
-* name : gwlb-console (고유의 이름을 입력 해야 합니. 예 : username-console)
+* name : mycloud9
 
-![](<.gitbook/assets/image (13).png>)
+![](<.gitbook/assets/image (203).png>)
 
 모든 설정을 기본값으로 사용하고, 인스턴스타입은 t3.small ,Cost-Saving Setting Never로 변경합니다. 절전모드로 변경되는 것을 방지하게 됩니다. 다음 진행 버튼을 계속 누르고 Cloud9을 생성합니다.
 
