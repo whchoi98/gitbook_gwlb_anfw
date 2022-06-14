@@ -739,7 +739,7 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 
 ![](<.gitbook/assets/image (205).png>)
 
-![](<.gitbook/assets/image (206).png>)
+![](<.gitbook/assets/image (206) (1).png>)
 
 * 대상유형 선택 - IP 주소 (다른 VPC의 인스턴스로 타겟그룹을 지정하기 위해서는 IP주소만 가능합니다)
 * 대상그룹 이름 - "VPC01-TG"**`, "VPC02-TG"`**

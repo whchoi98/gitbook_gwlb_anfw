@@ -6,7 +6,7 @@ description: 'Update : 2022-06-12/ 1h /Cloudformation CLI 배포로 변경'
 
 ## 목표 구성 개요
 
-2개의 각 워크로드 VPC (VPC01,02)은 Account내에 구성된 ANFW 기반의 보안 VPC를 통해서 내, 외부 트래픽을 처리하는 구성입니다. GWLB 기반의 보안 VPC는 2개의 AZ에 4개의 가상 Appliance가 로드밸런싱을 통해 처리 됩니다.
+2개의 각 워크로드 VPC (VPC01,02)은 Account내에 구성된 ANFW 기반의 보안 VPC를 통해서 내, 외부 트래픽을 처리하는 구성입니다. ANFW(AWS Network Firewall)와 연계되는 N2S VPC는 VPC01,02의 내외부 트래픽을 ANFW로 우회시킵니다
 
 이러한 구성은 VPC Endpoint를 특정 VPC에 구성하고, TransitGateway를 통해 ANFW에 VPC Endpoint Service를 연결하는 중앙집중 구조입니다.
 
@@ -14,7 +14,7 @@ ALB(Application Load Balancer)를 ANFW를 연계하는 VPC에 배치해서, 내�
 
 아래 그림은 목표 구성도 입니다.
 
-![](<.gitbook/assets/image (147).png>)
+![](<.gitbook/assets/image (206).png>)
 
 ## Cloudformation기반 VPC 배포
 
@@ -23,28 +23,25 @@ ALB(Application Load Balancer)를 ANFW를 연계하는 VPC에 배치해서, 내�
 Cloud9 콘솔에서 아래 github로 부터 VPC yaml 파일을 다운로드 합니다. (앞서 다운로드 하였으면 생략합니다.)
 
 ```
-git clone https://github.com/whchoi98/gwlb.git
+git clone https://github.com/whchoi98/gwlb_anfw.git
 
 ```
 
 아래와 같은 순서로 Cloudformation에서 Yaml파일을 배포합니다.
 
-1. GWLBVPC.yml
-2. N2SVPC.yml
-3. VPC01.yml, VPC02.yml
-4. GWLBTGW.yml
-
-
+1. N2SVPC.yml
+2. VPC01.yml, VPC02.yml
+3. ANFWTGW.yml
 
 ### 2.N2SVPC 배포
 
 외부 인터넷으로 통신하는 North-South 트래픽 처리를 하는 VPC를 생성합니다. 해당 VPC는 ANFW과 연계합니다
 
-N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. 다운로드 받은 Yaml 파일들 중에 N2SVPC 선택해서 생성합니다.스택 이름을 생성하고, 대부분 기본값을 사용합니다.
+N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. 다운로드 받은 Yaml 파일들 중에 N2SVPC 선택해서 생성합니다.스택 이름을 생성하고, Tokyo Region에 배포합니다.&#x20;
 
 * 스택이름 : N2SVPC
-* AvailabilityZone A : ap-northeast-2a
-* AvailabilityZone B : ap-northeast-2b
+* AvailabilityZone A : ap-northeast-1a
+* AvailabilityZone B : ap-northeast-1c
 * VPCCIDRBlock: 10.11.0.0
 * GWLBeSubnetABlock:10.11.1.0/24
 * GWLBeSubnetBBlock:10.11.2.0/24
@@ -58,16 +55,20 @@ N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. �
 * VPC1CIDRBlock : 10.1.0.0/16 (VPC1의 CIDR Block 주소를 선언합니다.)
 * VPC2CIDRBlock: 10.2.0.0/16 (VPC2의 CIDR Block 주소를 선언합니다.)
 * InstanceTyep: t3.small
-* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. gwlbkey)
+* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. mykey)
 
 ```
 aws cloudformation deploy \
-  --region ap-northeast-2 \
-  --stack-name "N2SVPC" \
-  --template-file "/home/ec2-user/environment/gwlb/Case4/2.Case4-N2SVPC.yml" \
+  --region ap-northeast-1 \
+  --stack-name "NRT-N2SVPC" \
+  --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/1.N2SVPC.yml" \
   --parameter-overrides \
     "KeyPair=$KeyName" \
+    "AvailabilityZoneA=ap-northeast-1a" \
+    "AvailabilityZoneB=ap-northeast-1c" \
+    "InstanceType=t3.small" \
   --capabilities CAPABILITY_NAMED_IAM
+  
 ```
 
 ### 4.VPC01,02 배포
@@ -79,8 +80,8 @@ VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC�
 {% endhint %}
 
 * 스택이름 : VPC01,VPC02
-* AvailabilityZone A : ap-northeast-2a
-* AvailabilityZone B : ap-northeast-2b
+* AvailabilityZone A : ap-northeast-1a
+* AvailabilityZone B : ap-northeast-1c
 * VPCCIDRBlock: 10.1.0.0 (VPC01), 10.2.0.0 (VPC02)
 * PrivateSubnetABlock:10.1.21.0/24 (VPC01), 10.2.22.0/24(VPC02)
 * PrivateSubnetBBlock:10.1.22.0/24 (VPC01), 10.2.22.0/24(VPC02)
