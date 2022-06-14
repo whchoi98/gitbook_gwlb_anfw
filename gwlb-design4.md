@@ -706,31 +706,58 @@ VPC01-Private-Instance, VPC02-Private-Instance를 각각 실행합니다.
 
 **`AWS 관리콘솔 - EC2 - 로드밸런서 - Application Load Balancer`**를 선택하고 **`로드 밸런서 생성`**을 선택합니다.  Application Loadbalancer를 선택하고 생성합니다
 
-![](<.gitbook/assets/image (203).png>)
+![](<.gitbook/assets/image (203) (1).png>)
 
-기본구성&#x20;
+**기본구성**&#x20;
 
 * **`이름 : "ALB-VPC01"`** 와 같은 이름을 입력합니다.
 * **`체계 : "인터넷 경계"`** 를 선택합니다.
-* **`VPC - "N2SVPC"`** 를 선택합니다.
-* **`가용영역 - "N2SVPC-Public-Subnet-A,B"`**를 선택합니다.
+* **`IP 주소유형 - "IPv4"`** 를 선택합니다.
 
+![](<.gitbook/assets/image (208).png>)
 
+**네트워크 매핑**&#x20;
 
+* **`VPC : "N2SVPC"`** 와 같은 이름을 입력합니다.
+* **`매핑 : "ap-northeast-2a (N2SVPC-Public-Subnet-A), ap-northeast-2b(N2SVPC-Public-Subnet-B)"`** 를 선택합니다.
 
+![](<.gitbook/assets/image (207).png>)
 
-보안 그룹 구성에서 기존 보안 그룹 **`"ALBSecuritryGroup"`**을 선택합니다. 이미 앞서 Cloudformation Stack에서 생성했습니다.
+**`보안그룹`**
 
-![](<.gitbook/assets/image (194).png>)
+* **`보안 그룹 : "ALBSecurityGroup"`** 를 선택합니다
 
-라우팅 구성을 아래와 같이 구성합니다.
+![](<.gitbook/assets/image (203).png>)
 
-* **`대상그룹 - 이름 : "VPC01-TG" , "VPC02-TG"`** 등과 같은 이름으로 구성합니다.
-* **`대상그룹 - 대상 유형 : "IP"`** 를 선택합니다.
-* **`상태검사 - 경로 : /ec2meta-webpage/index.php`** 를 입력합니다.\
-  (앞서 System Manager - RunCommand 로 8개 인스턴스에 패키지 구성을 완료한 경로입니다.)
+리스너 및 라우팅
 
-![](<.gitbook/assets/image (195).png>)
+Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합니다.&#x20;
+
+![](<.gitbook/assets/image (209).png>)
+
+그룹 세부 정보 지정
+
+![](<.gitbook/assets/image (205).png>)
+
+![](<.gitbook/assets/image (206).png>)
+
+* 대상유형 선택 - IP 주소 (다른 VPC의 인스턴스로 타겟그룹을 지정하기 위해서는 IP주소만 가능합니다)
+* 대상그룹 이름 - "VPC01-TG"
+* 프로토콜 - HTTP / 80
+* VPC - N2SVPC 선택
+* 프로토콜 버전 - HTTP1
+* 상태검사 프로토콜 - HTTP
+* 상태검사 경로 - 아래를 복사해서 입력합니다.&#x20;
+
+```
+/ec2meta-webpage/index.php
+```
+
+**대상등록**
+
+****
+
+![](<.gitbook/assets/image (204).png>)
 
 대상 등록에서는 N2SVPC 가 아닌, VPC01,02의 인스턴스가 Target이 되어야 합니다.
 
