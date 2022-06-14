@@ -714,14 +714,14 @@ VPC01-Private-Instance, VPC02-Private-Instance를 각각 실행합니다.
 * **`체계 : "인터넷 경계"`** 를 선택합니다.
 * **`IP 주소유형 - "IPv4"`** 를 선택합니다.
 
-![](<../.gitbook/assets/image (208) (1) (1).png>)
+![](<../.gitbook/assets/image (208) (1) (1) (1).png>)
 
 **네트워크 매핑**&#x20;
 
 * **`VPC : "N2SVPC"`** 와 같은 이름을 입력합니다.
 * **`매핑 : "ap-northeast-2a (N2SVPC-Public-Subnet-A), ap-northeast-2b(N2SVPC-Public-Subnet-B)"`** 를 선택합니다.
 
-![](<../.gitbook/assets/image (207) (1) (1).png>)
+![](<../.gitbook/assets/image (207) (1) (1) (1).png>)
 
 **`보안그룹`**
 
@@ -733,7 +733,7 @@ VPC01-Private-Instance, VPC02-Private-Instance를 각각 실행합니다.
 
 Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합니다.&#x20;
 
-![](<../.gitbook/assets/image (209) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (209) (1) (1) (1) (1) (1).png>)
 
 그룹 세부 정보 지정
 
@@ -775,7 +775,7 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 10.2.22.102
 ```
 
-![](<../.gitbook/assets/image (209) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (209) (1) (1) (1) (1).png>)
 
 대상 그룹 생성이 완료되면 Application Load Balancer 생성 메뉴창으로 다시 돌아갑니다
 
@@ -788,7 +788,7 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 
 아래에서 처럼 ALB 구성의 최종 구성 정보를 확인하고 , ALB를 생성합니다
 
-![](<../.gitbook/assets/image (204) (1).png>)
+![](<../.gitbook/assets/image (204) (1) (1).png>)
 
 **`AWS 관리콘솔 - EC2 - 로드밸런서`** 에서 생성한 N2SVPC 의 ALB로드밸런서를 확인합니다. **`ALB DNS A 레코드 값`**을 복사해 둡니다.
 
