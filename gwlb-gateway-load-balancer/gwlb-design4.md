@@ -737,7 +737,7 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 
 그룹 세부 정보 지정
 
-![](<../.gitbook/assets/image (205) (1).png>)
+![](<../.gitbook/assets/image (205) (1) (1).png>)
 
 ![](<../.gitbook/assets/image (206) (1).png>)
 

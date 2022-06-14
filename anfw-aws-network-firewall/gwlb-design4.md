@@ -159,7 +159,7 @@ aws cloudformation deploy \
 
 TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC에서 외부로 향하는) 에 대한 각 테이블을 확인하고 , 이후 Ingress (IGW에서 내부로 향하는)에 대한 테이블을 확인해 봅니다.
 
-![](<../.gitbook/assets/image (205).png>)
+![](<../.gitbook/assets/image (205) (1).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"ANFW-VPC01-Private-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
@@ -248,13 +248,37 @@ $ aws ec2 describe-instances --query 'Reservations[].Instances[].[Tags[?Key==`Na
 session manager 명령을 통해 해당 인스턴스에 연결해 봅니다. (예. ANFW-VPC01-Private-A-10.1.21.101)
 
 ```
+aws ssm start-session --target {ANFW-VPC01-Private-A-10.1.21.101 id} --region ap-northeast-1
+
 ```
 
+터미널에 접속한 후에 , 아래 명령을 통해 bash로 접근해서 외부로 트래픽을 전송해 봅니다.
 
+```
+sudo -s
+ping www.aws.com
 
-### 14. 인스턴스 패키지 설치&#x20;
+```
 
-VPC01,02의 EC2 인스턴스는 GWLB TGW(TransitGateway)가 생성된 이후 부터 인터넷이 가능했습니다. 아직까지 어떠한 패치나 패키지 설치가 이루어 지지 않았습니다.
+### 9. Ingress 트래픽 확인
+
+외부에서 ANFW-N2SVPC의 ALB의 공인 DNS A레코드로 접근하기 위해, ANFW를 통과한 이후에 다시 ANFW-N2SVPC ALB 접근 이후 , Target Group을 ANFW-VPC01,02 인스턴스 IP주소로 구성해서 웹 서비스를 제공하는 방식을 구성했습니다.
+
+아래와 같은 도식으로 외부에서 내부로 웹서비스나 기타 퍼블릭 서비스를 제공할 수 있습니다.
+
+![](<../.gitbook/assets/image (205).png>)
+
+1. 외부에 노출된 ALB DNS A 레코드로 접근 합니다.
+2. IGW에서 Ingress Routing을 통해 ANFW-N2SVPC VPC Endpoint로 접근합니다.\
+   (ALB의 내부 주소는 10.11.11.0/24,10.11.12.0/24 이고 , Ingress Routing Table에서는 VPC Endpoint로 목적지를 설정해 두었습니다.)
+3. ANFW-N2SVPC VPC Endpoint에서 ANFW로 트래픽을 전송합니다.
+4. ANFW에서 보안정책 처리 후 Return
+5. ANFW-N2SVPC VPC Endpoint에서 ALB 전달
+6. ALB에서 VPC01,02 Target Group으로 전달.
+
+### 10. 인스턴스 패키지 설치&#x20;
+
+ANFW-VPC01,02의 EC2 인스턴스는 ANFW-TGW(TransitGateway)가 생성된 이후 부터 인터넷이 가능했습니다. 아직까지 어떠한 패치나 패키지 설치가 이루어 지지 않았습니다.
 
 AWS의 Resource Group 구성과 System Manager RunBook을 통해서 , Shell을 동시에 8개를 수행합니다.
 
@@ -269,18 +293,18 @@ AWS의 Resource Group 구성과 System Manager RunBook을 통해서 , Shell을 �
 ![](<../.gitbook/assets/image (186).png>)
 
 * **`그룹 유형 : Cloudformation 스택기반`**
-* **`그룹화 기준 - Cloudformation 스택 : VPC01`**
+* **`그룹화 기준 - Cloudformation 스택 : ANFW-VPC01`**
 * **`그룹화 기준 - Cloudformation 스택의 리소스 유형 : AWS::EC2::Instance`**
 * **`그룹리소스 미리보기 선택`**&#x20;
-* **`그룹 세부 정보 : VPC01-Private-Instance`**
+* **`그룹 세부 정보 : ANFW-VPC01-Private-Instance`**
 
 반복해서 VPC02 도 구성합니다.
 
 * **`그룹 유형 : Cloudformation 스택기반`**
-* **`그룹화 기준 - Cloudformation 스택 : VPC02`**
+* **`그룹화 기준 - Cloudformation 스택 : ANFW-VPC02`**
 * **`그룹화 기준 - Cloudformation 스택의 리소스 유형 : AWS::EC2::Instance`**
 * **`그룹리소스 미리보기 선택`**&#x20;
-* **`그룹 세부 정보 : VPC02-Private-Instance`**
+* **`그룹 세부 정보 : ANFW-VPC02-Private-Instance`**
 
 생성된 Resource Group을 **`"저장된 리소스 그룹"`** 에서 확인해 봅니다.
 
@@ -318,11 +342,11 @@ exit;
 
 ![](<../.gitbook/assets/image (191).png>)
 
-대상에서 리소스그룹을 선택하고, 리소스 그룹은 앞서 생성한 "VPC01-Private-Instance", "VPC02-Private-Instance"를 선택합니다.
+대상에서 리소스그룹을 선택하고, 리소스 그룹은 앞서 생성한 "ANFW-VPC01-Private-Instance", "ANFW-VPC02-Private-Instance"를 선택합니다.
 
 ![](<../.gitbook/assets/image (190).png>)
 
-VPC01-Private-Instance, VPC02-Private-Instance를 각각 실행합니다.
+ANFW-VPC01-Private-Instance, ANFW-VPC02-Private-Instance를 각각 실행합니다.
 
 모두 실행하고 나면, 아래와 같이 명령기록에 Shell이 8개 인스턴스에 모두 실행된 것을 확인할 수 있습니다.
 
