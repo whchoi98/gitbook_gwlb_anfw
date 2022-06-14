@@ -10,7 +10,7 @@ description: 'Update : 2022-06-12'
 
 이러한 구성은 VPC Endpoint를 특정 VPC에 구성하고, TransitGateway를 통해 ANFW에 VPC Endpoint Service를 연결하는 중앙집중 구조입니다.
 
-ALB(Application Load Balancer)를 ANFW를 연계하는 VPC에 배치해서, 내부의 VPC01,02의 서비스들이 외부에 제공하도록 할 수 있습니다
+ALB(Application Load Balancer)를 ANFW를 연계하는 VP..C에 배치해서, 내부의 VPC01,02의 서비스들이 외부에 제공하도록 할 수 있습니다
 
 아래 그림은 목표 구성도 입니다.
 
@@ -476,7 +476,7 @@ Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었�
 
 ![](<../.gitbook/assets/image (220).png>)
 
-14\. Network Firewall 정책
+### 14. Network Firewall 정책
 
 이제 생성된 Firewall과 Firewall Policy에 Rule(보안 규칙)을 설정하여, 상세한 보안 규칙들을 설정해 봅니다.
 
@@ -484,7 +484,7 @@ Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었�
 
 ![](<../.gitbook/assets/image (213).png>)
 
-15\. Stateless Rule 적용
+### 15. Stateless Rule 적용
 
 앞서 생성한 ALB-VPC01, ALB-VPC02 웹서비스 중에 1개의 ALB를 Block 해 봅니다
 
