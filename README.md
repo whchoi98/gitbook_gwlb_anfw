@@ -6,17 +6,17 @@ description: 'update : 2022-06-12'
 
 ## 목차&#x20;
 
-### :ballot\_box\_with\_check:[사전 준비 (10min)](prepare.md)
+### :ballot\_box\_with\_check:[사전 준비](./#10min)&#x20;
 
-### :ballot\_box\_with\_check:[GWLB ](broken-reference)소개
+### :ballot\_box\_with\_check:[GWLB 소개](./#gwlb)
 
-### :ballot\_box\_with\_check:[GWLB Design](broken-reference)
+### :ballot\_box\_with\_check:[GWLB Design](./#gwlb-design)
 
-### :ballot\_box\_with\_check:ANFW 소개
+### :ballot\_box\_with\_check:[ANFW 소개](./#anfw)
 
-### :ballot\_box\_with\_check:ANFW Design
+### :ballot\_box\_with\_check:[ANFW Design](./#anfw-design)
 
-### :ballot\_box\_with\_check:GWLB & ANFW Super LAB
+### :ballot\_box\_with\_check:[GWLB & ANFW Super LAB](./#gwlb-and-anfw-super-lab)
 
 #### written by Woohyung Choi (whchoi98@gmail.com) / (whchoi@amazon.com)
 
