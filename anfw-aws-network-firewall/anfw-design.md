@@ -193,6 +193,8 @@ TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC�
 
 ![](<../.gitbook/assets/image (212) (1).png>)
 
+## Traffic 확인
+
 ### 7. 트래픽 확인.&#x20;
 
 아래와 같은 트래픽 흐름으로 VPC 에서 외부로 트래픽을 처리하게 됩니다.
@@ -276,6 +278,8 @@ ping www.aws.com
 5. ANFW-N2SVPC VPC Endpoint에서 ALB 전달
 6. ALB에서 VPC01,02 Target Group으로 전달.
 
+## ALB 확인
+
 ### 10. 인스턴스 패키지 설치&#x20;
 
 ANFW-VPC01,02의 EC2 인스턴스는 ANFW-TGW(TransitGateway)가 생성된 이후 부터 인터넷이 가능했습니다. 아직까지 어떠한 패치나 패키지 설치가 이루어 지지 않았습니다.
@@ -350,9 +354,9 @@ ANFW-VPC01-Private-Instance, ANFW-VPC02-Private-Instance를 각각 실행합니�
 
 모두 실행하고 나면, 아래와 같이 명령기록에 Shell이 8개 인스턴스에 모두 실행된 것을 확인할 수 있습니다.
 
-![](<../.gitbook/assets/image (220).png>)
+![](<../.gitbook/assets/image (222).png>)
 
-### 15. ALB 구성
+### 11. ALB 구성
 
 이제 N2SVPC에서 VPC01,VPC02의 인스턴스 로드밸런서를 위한 ALB 구성을 하고, Target Group을 각각 VPC01,02로 지정합니다.
 
@@ -446,27 +450,7 @@ ALB 구성의 최종 구성 정보를 확인하고 , ALB를 생성합니다.&#x2
 
 ![](<../.gitbook/assets/image (211).png>)
 
-### 16. ALB 트래픽 확인
-
-아래에서 ALB의 내부 IP 주소를 확인해 봅니다.
-
-**`AWS 관리콘솔 - EC2- 네트워크 및 보안 - 네트워크 인터페이스 - ALB-VPC01-TG`** 확인.
-
-![](<../.gitbook/assets/image (200).png>)
-
-이제 다시 Cloud9 콘솔에서 앞서 실행 해 둔 Applicance 터미널에서 아래를 실행합니다.
-
-```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance1
-sudo tcpdump -nvv 'port 6081' | grep '10.11.11.99'
-
-```
-
-```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance2
-sudo tcpdump -nvv 'port 6081' | grep '10.11.11.99'
-
-```
+### 12. ALB 트래픽 확인
 
 여러분의 웹 브라우저에서 앞서 복사해둔 ALB DNS A Record와 나머지 URL을 입력합니다.
 
@@ -476,28 +460,25 @@ http://{ALB-DNS-A-Record}/ec2meta-webpage/index.php
 
 ![](<../.gitbook/assets/image (201).png>)
 
-&#x20;웹브라우저에서 ALB DNS A 레코드와 URL을 입력해서 실행시키면, GWLB에 연결해 둔 Appliance의 TCP Dump값에서 패킷을 통과하는 것을 확인 할 수 있습니다.
-
-```
-[ec2-user@ip-10-254-11-102 ~]$ sudo tcpdump -nvv 'port 6081' | grep '10.11.11.99'
-tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
-    122.40.8.88.51754 > 10.11.11.99.http: Flags [S], cksum 0xdfa5 (correct), seq 1221545331, win 65535, options [mss 1460,nop,wscale 10,nop,nop,TS val 229789941 ecr 0,sackOK,eol], length 0
-    122.40.8.88.51754 > 10.11.11.99.http: Flags [S], cksum 0xdfa5 (correct), seq 1221545331, win 65535, options [mss 1460,nop,wscale 10,nop,nop,TS val 229789941 ecr 0,sackOK,eol], length 0
-    10.11.11.99.http > 122.40.8.88.51754: Flags [S.], cksum 0x7541 (correct), seq 3732648217, ack 1221545332, win 26847, options [mss 8645,sackOK,TS val 469191389 ecr 229789941,nop,wscale 8], length 0
-    10.11.11.99.http > 122.40.8.88.51754: Flags [S.], cksum 0x7541 (correct), seq 3732648217, ack 1221545332, win 26847, options [mss 8645,sackOK,TS val 469191389 ecr 229789941,nop,wscale 8], length 0
-    122.40.8.88.51754 > 10.11.11.99.http: Flags [.], cksum 0x2856 (correct), seq 1, ack 1, win 128, options [nop,nop,TS val 229789982 ecr 469191389], length 0
-    122.40.8.88.51754 > 10.11.11.99.http: Flags [.], cksum 0x2856 (correct), seq 1, ack 1, win 128, options [nop,nop,TS val 229789982 ecr 469191389], length 0
-    122.40.8.88.51754 > 10.11.11.99.http: Flags [P.], cksum 0xc6d2 (correct), seq 1:428, ack 1, win 128, options [nop,nop,TS val 229789982 ecr 469191389], length 427: HTTP, length: 427
-    122.40.8.88.51754 > 10.11.11.99.http: Flags [P.], cksum 0xc6d2 (correct), seq 1:428, ack 1, win 128, options [nop,nop,TS val 229789982 ecr 469191389], length 427: HTTP, length: 427
-    10.11.11.99.http > 122.40.8.88.51754: Flags [.], cksum 0x2693 (correct), seq 1, ack 428, win 110, options [nop,nop,TS val 469191431 ecr 229789982], length 0
-    10.11.11.99.http > 122.40.8.88.51754: Flags [.], cksum 0x2693 (correct), seq 1, ack 428, win 110, options [nop,nop,TS val 469191431 ecr 229789982], length 0
-    10.11.11.99.http > 122.40.8.88.51754: Flags [.], cksum 0x2a92 (correct), seq 1:1449, ack 428, win 110, options [nop,nop,TS val 469191516 ecr 229789982], length 1448: HTTP, length: 1448
-    10.11.11.99.http > 122.40.8.88.51754: Flags [.], cksum 0x2a92 (correct), seq 1:1449, ack 428, win 110, options [nop,nop,TS val 469191516 ecr 229789982], length 1448: HTTP, length: 1448
-    10.11.11.99.http > 122.40.8.88.51754: Flags [P.], cksum 0xda8c (correct), seq 1449:2777, ack 428, win 110, options [nop,nop,TS val 469191516 ecr 229789982], length 1328: HTTP
-    10.11.11.99.http > 122.40.8.88.51754: Flags [P.], cksum 0xda8c (correct), seq 1449:2777, ack 428, win 110, options [nop,nop,TS val 469191516 ecr 229789982], length 1328: HTTP
-```
-
 VPC02의 인스턴스들과 ALB 로드밸런스도 위와 같은 방법으로 확인해 봅니다.
+
+
+
+## &#x20;Network Firewall 확인
+
+### 13. Network Firewall 확인.
+
+Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었는지 확인해 봅니다
+
+* VPC - Amazon Network Firewall - 방화벽
+
+![](<../.gitbook/assets/image (221).png>)
+
+![](<../.gitbook/assets/image (220).png>)
+
+14\. Network Firewall 정책 적용
+
+
 
 ## 자원 삭제
 
