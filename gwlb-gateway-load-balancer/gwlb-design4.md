@@ -1,47 +1,97 @@
 ---
-description: 'Update : 2022-06-12/ 1h /Cloudformation CLI 배포로 변경'
+description: 'Update : 2022-06-12'
 ---
 
-# ANFW Design
+# GWLB Design
 
 ## 목표 구성 개요
 
-2개의 각 워크로드 VPC (VPC01,02)은 Account내에 구성된 ANFW 기반의 보안 VPC를 통해서 내, 외부 트래픽을 처리하는 구성입니다. ANFW(AWS Network Firewall)와 연계되는 N2S VPC는 VPC01,02의 내외부 트래픽을 ANFW로 우회시킵니다
+2개의 각 워크로드 VPC (VPC01,02)은 Account내에 구성된 GWLB 기반의 보안 VPC를 통해서 내, 외부 트래픽을 처리하는 구성입니다. GWLB 기반의 보안 VPC는 2개의 AZ에 4개의 가상 Appliance가 로드밸런싱을 통해 처리 됩니다.
 
-이러한 구성은 VPC Endpoint를 특정 VPC에 구성하고, TransitGateway를 통해 ANFW에 VPC Endpoint Service를 연결하는 중앙집중 구조입니다.
+이러한 구성은 VPC Endpoint를 특정 VPC에 구성하고, TransitGateway를 통해 GWLB에 VPC Endpoint Service를 연결하는 중앙집중 구조입니다.
 
-ALB(Application Load Balancer)를 ANFW를 연계하는 VPC에 배치해서, 내부의 VPC01,02의 서비스들이 외부에 제공하도록 할 수 있습니다
+ALB(Application Load Balancer)를 GWLB와 연계하는 VPC에 배치해서, 내부의 VPC01,02의 서비스들이 외부에 제공하도록 합니다
 
-아래 그림은 목표 구성도 입니다.
-
-![](<.gitbook/assets/image (206).png>)
+![](<../.gitbook/assets/image (147).png>)
 
 ## Cloudformation기반 VPC 배포
 
 ### 1.VPC yaml 파일 다운로드
 
-Cloud9 콘솔에서 아래 github로 부터 VPC yaml 파일을 다운로드 합니다. (앞서 다운로드 하였으면 생략합니다.)
+Cloud9 콘솔에서 아래 github로 부터 VPC yaml 파일을 다운로드 합니다.&#x20;
 
 ```
+cd ~/environment
 git clone https://github.com/whchoi98/gwlb_anfw.git
 
 ```
 
 아래와 같은 순서로 Cloudformation에서 Yaml파일을 배포합니다.
 
-1. N2SVPC.yml
-2. VPC01.yml, VPC02.yml
-3. ANFWTGW.yml
+1. GWLBVPC.yml
+2. N2SVPC.yml
+3. VPC01.yml, VPC02.yml
+4. GWLBTGW.yml
 
-### 2.N2SVPC 배포
+{% hint style="warning" %}
+계정에서 VPC 기본 할당량은 Default VPC 포함 5개입니다. 이 랩에서는 VPC03 은 생성하지 않습니다.
+{% endhint %}
 
-외부 인터넷으로 통신하는 North-South 트래픽 처리를 하는 VPC를 생성합니다. 해당 VPC는 ANFW과 연계합니다
+### 2.GWLB VPC 배포
 
-N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. 다운로드 받은 Yaml 파일들 중에 N2SVPC 선택해서 생성합니다.스택 이름을 생성하고, Tokyo Region에 배포합니다.&#x20;
+Cloud9 터미널에서 AWS CLI의 Cloudformation 명령을 통해 GWLBVPC를 배포합니다
+
+스택 세부 정보 지정에서 , 스택이름과 VPC Parameters를 지정합니다. 대부분 기본값을 사용하면 됩니다.
+
+* 스택이름 : GWLBVPC
+* AvailabilityZone A : ap-northeast-2a
+* AvailabilityZone B : ap-northeast-2b
+* VPCCIDRBlock: 10.254.0.0/16
+* PublicSubnetABlock: 10.254.11.0/24
+* PublicSubnetBBlock: 10.254.12.0/24
+* InstanceTyep: t3.small
+* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다. (예. mykey)
+
+```
+aws cloudformation deploy \
+  --region ap-northeast-2 \
+  --stack-name "GWLBVPC" \
+  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/1.GWLBVPC.yml" \
+  --parameter-overrides \
+    "KeyPair=$KeyName" \
+    "AvailabilityZoneA=ap-northeast-2a" \
+    "AvailabilityZoneB=ap-northeast-2b" \
+    "InstanceType=t3.small" \
+  --capabilities CAPABILITY_NAMED_IAM
+  
+```
+
+3\~4분 후에 GWLBVPC가 완성됩니다.
+
+진행 중이거나 완성된 결과는 **`AWS 관리콘솔 - Cloudformation`** 에서 확인이 가능합니다
+
+**`AWS 관리콘솔 - VPC - 가상 프라이빗 클라우드 - 엔드포인트 서비스`** 를 선택합니다. Cloudformation을 통해서 VPC Endpoint 서비스가 이미 생성되어 있습니다. 이것을 선택하고 `세부 정보`를 확인합니다.
+
+서비스 이름을 복사해 둡니다. 뒤에서 생성할 VPC들의 Cloudformation에서 사용할 것입니다.
+
+![](<../.gitbook/assets/image (153).png>)
+
+VPCEndpointServiceName 값을 아래에서 처럼 환경변수에 저장해 둡니다. &#x20;
+
+```
+export VPCEndpointServiceName=com.amazonaws.vpce.ap-northeast-2.vpce-svc-05ab1bb335b43d371
+
+```
+
+### 3. N2SVPC 배포
+
+GWLBVPC와 연결되고, North-South 트래픽 처리를 하는 VPC를 생성합니다.
+
+N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. 다운로드 받은 Yaml 파일들 중에 N2SVPC 선택해서 생성합니다. 대부분 기본값을 사용합니다.
 
 * 스택이름 : N2SVPC
-* AvailabilityZone A : ap-northeast-1a
-* AvailabilityZone B : ap-northeast-1c
+* AvailabilityZone A : ap-northeast-2a
+* AvailabilityZone B : ap-northeast-2b
 * VPCCIDRBlock: 10.11.0.0
 * GWLBeSubnetABlock:10.11.1.0/24
 * GWLBeSubnetBBlock:10.11.2.0/24
@@ -54,34 +104,36 @@ N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. �
 * DefaultRouteBlock: 0.0.0.0/0 (Default Route Table 주소를 선언합니다.)
 * VPC1CIDRBlock : 10.1.0.0/16 (VPC1의 CIDR Block 주소를 선언합니다.)
 * VPC2CIDRBlock: 10.2.0.0/16 (VPC2의 CIDR Block 주소를 선언합니다.)
+* VPCEndpointServiceName : 앞서 복사해둔 GWLBVPC의 VPC endpoint service name을 입력합니다.
 * InstanceTyep: t3.small
-* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. mykey)
+* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. gwlbkey)
 
 ```
 aws cloudformation deploy \
-  --region ap-northeast-1 \
-  --stack-name "NRT-N2SVPC" \
-  --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/1.N2SVPC.yml" \
+  --region ap-northeast-2 \
+  --stack-name "N2SVPC" \
+  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/2.N2SVPC.yml" \
   --parameter-overrides \
     "KeyPair=$KeyName" \
-    "AvailabilityZoneA=ap-northeast-1a" \
-    "AvailabilityZoneB=ap-northeast-1c" \
+    "AvailabilityZoneA=ap-northeast-2a" \
+    "AvailabilityZoneB=ap-northeast-2b" \
     "InstanceType=t3.small" \
+    "VPCEndpointServiceName=$VPCEndpointServiceName" \
   --capabilities CAPABILITY_NAMED_IAM
   
 ```
 
 ### 4.VPC01,02 배포
 
-**나머지 VPC01,VPC02,VPC03 의 Cloudformation Yaml 파일을 업로드 합니다.**
+**나머지 VPC01,VPC02,VPC03 의 Cloudformation Yaml 파일을 적용합니다**
 
 {% hint style="info" %}
-VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC로 사용 중이고, 4개를 사용 가능하므로 일반 계정에서는 N2SVPC, VPC01,VPC02 까지만 생성 가능합니다.
+VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC로 사용 중이고, 4개를 사용 가능하므로 일반 계정에서는 GWLBVPC, N2SVPC, VPC01,VPC02 까지만 생성 가능합니다.
 {% endhint %}
 
 * 스택이름 : VPC01,VPC02
-* AvailabilityZone A : ap-northeast-1a
-* AvailabilityZone B : ap-northeast-1c
+* AvailabilityZone A : ap-northeast-2a
+* AvailabilityZone B : ap-northeast-2b
 * VPCCIDRBlock: 10.1.0.0 (VPC01), 10.2.0.0 (VPC02)
 * PrivateSubnetABlock:10.1.21.0/24 (VPC01), 10.2.22.0/24(VPC02)
 * PrivateSubnetBBlock:10.1.22.0/24 (VPC01), 10.2.22.0/24(VPC02)
@@ -94,9 +146,13 @@ VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC�
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "VPC01" \
-  --template-file "/home/ec2-user/environment/gwlb/Case4/3.Case4-VPC01.yml" \
+  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/3.VPC01.yml" \
   --parameter-overrides \
     "KeyPair=$KeyName" \
+    "AvailabilityZoneA=ap-northeast-2a" \
+    "AvailabilityZoneB=ap-northeast-2b" \
+    "InstanceType=t3.small" \
+    "VPCEndpointServiceName=$VPCEndpointServiceName" \
   --capabilities CAPABILITY_NAMED_IAM
   
 ```
@@ -105,9 +161,12 @@ aws cloudformation deploy \
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "VPC02" \
-  --template-file "/home/ec2-user/environment/gwlb/Case4/4.Case4-VPC02.yml" \
+  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/4.VPC02.yml" \
   --parameter-overrides \
     "KeyPair=$KeyName" \
+    "AvailabilityZoneA=ap-northeast-2a" \
+    "AvailabilityZoneB=ap-northeast-2b" \
+    "InstanceType=t3.small" \
   --capabilities CAPABILITY_NAMED_IAM
   
 ```
@@ -131,65 +190,68 @@ aws cloudformation deploy \
 
 **`AWS 관리 콘솔 - VPC 대시 보드 - VPC`**
 
-![](<.gitbook/assets/image (159).png>)
+![](<../.gitbook/assets/image (159).png>)
 
 **`AWS 관리 콘솔 - VPC 대시 보드 - 서브넷`**
 
-![](<.gitbook/assets/image (158).png>)
+![](<../.gitbook/assets/image (158).png>)
 
 ####
 
 ### 5. TransitGateway 배포
 
-N2SVPC, VPC01,VPC02을 연결하기 위한 TransitGateway를 배포합니다. 앞서 git을 통해 다운 받은 파일 중 ANFWTGW.yml 파일을 Cloudformation을 통해서 배포합니다.
+N2SVPC, VPC01,02,03 을 연결할 TGW를 생성합니다. N2STGW는 TGW Routing Table과 각 VPC들이 Route Table을 자동으로 구성해 줍니다.
 
-`Default Route Table`과 **`VPC01, VPC02 CIDR`** 주소를 입력합니다. (기본 값으로 설정되어 있습니다.)
+* Stack Name : GWLBTGW
+* DefaultRouteBlock: 0.0.0.0/0
+* VPC01CIDRBlock: 10.1.0.0/16
+* VPC02CIDRBlock: 10.2.0.0/16
 
-![](<.gitbook/assets/image (160).png>)
+```
+aws cloudformation deploy \
+  --region ap-northeast-2 \
+  --stack-name "GWLBTGW" \
+  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/5.GWLBTGW.yml" 
+  
+```
 
 ### 6. 라우팅 테이블 확인
 
-TransitGateway 구성과 RouteTable을 아래에서 확인합니다.
-
-![](<.gitbook/assets/image (161).png>)
-
-#### 6. 라우팅 테이블 확인
-
 TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC에서 외부로 향하는) 에 대한 각 테이블을 확인하고 , 이후 Ingress (IGW에서 내부로 향하는)에 대한 테이블을 확인해 봅니다.
 
-![](<.gitbook/assets/image (162).png>)
+![](<../.gitbook/assets/image (162).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"VPC01-Private-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<.gitbook/assets/image (167).png>)
+![](<../.gitbook/assets/image (167).png>)
 
 **`AWS 관리콘솔 - TransitGateway`** 를 선택하고, **`"GWLBTGW"`** 라는 이름으로 **`TransitGateway`**가 정상적으로 생성되었는지 확인합니다.
 
-![](<.gitbook/assets/image (163).png>)
+![](<../.gitbook/assets/image (163).png>)
 
 **`AWS 관리콘솔 - TransitGateway - TransitGateway Attachment(연결)`** 을 선택하고, 각 VPC에 연결된 Attachment를 확인해 봅니다.
 
-![](<.gitbook/assets/image (164).png>)
+![](<../.gitbook/assets/image (164).png>)
 
 **`AWS 관리콘솔 - TransitGateway - TransitGateway 라우팅테이블`**을 선택하고, **`"GWLBTGW-RT-VPC-OUT"`** 을 선택해서, TGW에서 트래픽이 외부로 가는 라우팅을 확인해 봅니다.
 
-![](<.gitbook/assets/image (165).png>)
+![](<../.gitbook/assets/image (165).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-Private-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<.gitbook/assets/image (166).png>)
+![](<../.gitbook/assets/image (166).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-Public-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<.gitbook/assets/image (171).png>)
+![](<../.gitbook/assets/image (171).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-GWLBe-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<.gitbook/assets/image (170).png>)
+![](<../.gitbook/assets/image (170).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-IGW-Ingress-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<.gitbook/assets/image (169).png>)
+![](<../.gitbook/assets/image (169).png>)
 
 ## GWLB 구성 확인
 
@@ -200,13 +262,13 @@ GWLBVPC 구성을 확인해 봅니다.
 3. VPC Endpoint 와 Service 확인
 4. Appliance 확인
 
-![](<.gitbook/assets/image (172).png>)
+![](<../.gitbook/assets/image (172).png>)
 
 ### 7.GWLB 구성
 
 **`AWS 관리 콘솔 - EC2 - 로드밸런싱 - 로드밸런서`** 메뉴를 선택합니다. Gateway LoadBalancer 구성을 확인할 수 있습니다. ELB 유형이 **`"gateway"`**로 구성된 것을 확인 할 수 있습니다.
 
-![](<.gitbook/assets/image (173).png>)
+![](<../.gitbook/assets/image (173).png>)
 
 ### 8.GWLB Target Group 구성
 
@@ -215,13 +277,13 @@ GWLBVPC 구성을 확인해 봅니다.
 * 프로토콜 : **`GENEVE 6081`** (포트 6081의 GENGEVE 프로토콜을 사용하여 모든 IP 패킷을 수신하고 리스너 규칙에 지정된 대상 그룹에 트래픽을 전달합니다.)
 * 등록된 대상 : GWLB가 로드밸런싱을 하고 있는 Target 장비를 확인합니다.
 
-![](<.gitbook/assets/image (174).png>)
+![](<../.gitbook/assets/image (174).png>)
 
 **`AWS 관리 콘솔 - EC2 - 로드밸런싱 - 대상 그룹 - 상태검사`** 메뉴를 확인합니다.
 
 ELB와 동일하게 대상그룹(Target Group)에 상태를 검사할 수 있습니다. 이 랩에서는 HTTP Path / 를 통해서 **`Health Check`**를 하도록 구성했습니다.
 
-![](<.gitbook/assets/image (175).png>)
+![](<../.gitbook/assets/image (175).png>)
 
 ### 9. VPC Endpoint Service 확인
 
@@ -235,70 +297,61 @@ N2SVPC Private link로 연결하기 위해, GWLB VPC에 Endpoint Service를 구�
 
 2개 영역에 걸쳐서 GWLB에 대해 VPC Endpoint Service를 구성하고 있습니다.
 
-![](<.gitbook/assets/image (176).png>)
+![](<../.gitbook/assets/image (176).png>)
 
 **`AWS 관리 콘솔 - VPC - 엔드포인트 서비스-엔드포인트 연결`**를 선택합니다.
 
 N2SVPC의 각 가용영역들과 연결된 것을 확인 할 수 있습니다. VPC별 2개의 가용영역의 Private Subnet에 배치된 VPC Endpoint에 연결된 것을 확인 합니다.
 
-![](<.gitbook/assets/image (177).png>)
+![](<../.gitbook/assets/image (177).png>)
 
 ### 10. Appliance 확인
 
 **`AWS 관리 콘솔 - EC2 - 인스턴스`** 메뉴를 선택하고, "appliance" 키워드로 필터링 해 봅니다. 4개의 리눅스 기반의 appliance가 설치되어 있습니다.
 
-![](<.gitbook/assets/image (178).png>)
+![](<../.gitbook/assets/image (178).png>)
 
 Appliance 구성 정보를 확인해 봅니다.
 
 **`AWS 관리콘솔 - Cloudformation - 스택`**을 선택하면, 앞서 배포했던 Cloudformation 스택들을 확인 할 수 있습니다. **`"GWLBVPC"`**를 선택합니다. 그리고 출력을 선택합니다. 값을 확인해 보면 공인 IP 주소를 확인 할 수 있습니다.
 
-![](<.gitbook/assets/image (179).png>)
+![](<../.gitbook/assets/image (179).png>)
 
 앞서 사전 준비에서 생성한 Cloud9 터미널에서 Appliance로 직접 접속해 봅니다.
 
 ```
-export Appliance4_1={Appliance1ip address}
-export Appliance4_2={Appliance2ip address}
-export Appliance4_3={Appliance3ip address}
-export Appliance4_4={Appliance4ip address}
+export Appliance1={Appliance1ip address}
+export Appliance2={Appliance2ip address}
+export Appliance3={Appliance3ip address}
+export Appliance4={Appliance4ip address}
 ```
 
 아래와 같이 구성합니다.
 
 ```
-#기존 Appliance 정보를 삭제
-sudo sed '/Appliance/d' ~/.bash_profile
-
-#Appliance IP Export
-export Appliance4_1=13.112.190.73
-export Appliance4_2=52.69.76.12
-export Appliance4_3=18.183.158.149
-export Appliance4_4=54.199.252.186
-
 #bash profile에 등록
-echo "export Appliance4_1=$Appliance4_1" | tee -a ~/.bash_profile
-echo "export Appliance4_2=$Appliance4_2" | tee -a ~/.bash_profile
-echo "export Appliance4_3=$Appliance4_3" | tee -a ~/.bash_profile
-echo "export Appliance4_4=$Appliance4_4" | tee -a ~/.bash_profile
+echo "export Appliance1=$Appliance1" | tee -a ~/.bash_profile
+echo "export Appliance2=$Appliance2" | tee -a ~/.bash_profile
+echo "export Appliance3=$Appliance3" | tee -a ~/.bash_profile
+echo "export Appliance4=$Appliance4" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
 
-각 Appliance에서 아래 명령을 통해 , GWLB IP와 어떻게 매핑되었는지 확인합니다. Cloud9에서 새로운 터미널 4개를 탭에서 추가해서 4개 Appliance를 모두 확인해 봅니다.
+Cloud9에서 새로운 터미널 4개를 탭에서 추가해서 4개 Appliance를 모두 확인해 봅니다.
 
 ```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance1
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance2
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance3
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance4
+ssh -i ~/environment/mykey.pem ec2-user@$Appliance1
+ssh -i ~/environment/mykey.pem ec2-user@$Appliance2
+ssh -i ~/environment/mykey.pem ec2-user@$Appliance3
+ssh -i ~/environment/mykey.pem ec2-user@$Appliance4
 
 ```
 
 각 Appliance에서 아래 명령을 통해 , GWLB IP와 어떻게 매핑되었는지 확인합니다.
 
 ```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance1
+ssh -i ~/environment/mykey.pem ec2-user@$Appliance1
 sudo iptables -L -n -v -t nat
 ```
 
@@ -321,12 +374,12 @@ Chain POSTROUTING (policy ACCEPT 20849 packets, 1611K bytes)
 18792 2579K MASQUERADE  udp  --  *      eth0    10.254.11.64         10.254.11.64         udp dpt:6081
 ```
 
-GENEVE 터널링의 GWLB IP주소는 10.254.11.101 이며, Appliance IP와 터널링 된 것을 확인 할 수 있습니다.
+위의 예제에서 GENEVE 터널링의 GWLB IP주소는 10.254.11.101 이며, Appliance IP와 터널링 된 것을 확인 할 수 있습니다.
 
 AZ B에 배포된 Appliance는 다음과 같이 출력됩니다.
 
 ```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance3
+ssh -i ~/environment/mykey.pem ec2-user@$Appliance3
 sudo iptables -L -n -v -t nat
 
 ```
@@ -358,7 +411,7 @@ GENEVE 터널링의 GWLB IP주소는 10.254.12.101 이며, Appliance IP와 터�
 
 아래와 같은 트래픽 흐름으로 VPC 에서 외부로 트래픽을 처리하게 됩니다.&#x20;
 
-![](<.gitbook/assets/image (180).png>)
+![](<../.gitbook/assets/image (180).png>)
 
 1. VPC01,02 Private Subnet Instance에서 TGW 로 트래픽 전송 (Private Subnet Routing Table 참조)
 2. TGW에서 VPC01의 Attachment 로 연결된 라우팅 테이블을 참조
@@ -433,21 +486,11 @@ VPC01,02 을 Cloudformation을 통해 배포할 때 해당 인스턴스들에 Se
 
 **`AWS 관리콘솔 - VPC 대시보드 - VPC - 앤드포인트`** 에서 SSM(Session Manager) 관련 VPC Endpoint 배포를 확인해 봅니다.
 
-![](<.gitbook/assets/image (181).png>)
+![](<../.gitbook/assets/image (181).png>)
 
 **`AWS 관리콘솔 - EC2 대시보드 - 인스턴스`** 에서 VPC1,2 인스턴스를 선택하고 IAM Profile이 정상적으로 구성되었는지 확인합니다.
 
-![](<.gitbook/assets/image (182).png>)
-
-먼저 Cloud9에 Session Manager 기반 접속을 위해 아래와 같이 설치합니다. **(GWLB Design1 에서 설치하였으면 생략합니다.)**
-
-```
-#session manager plugin 설치.
-curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
-sudo yum install -y session-manager-plugin.rpm
-git clone https://github.com/whchoi98/useful-shell.git
-
-```
+![](<../.gitbook/assets/image (182).png>)
 
 session manager 기반으로 접속하기 위해, 아래 명령을 실행하여 ec2 인스턴스의 id값을 확인합니다.
 
@@ -460,24 +503,31 @@ cd ~/environment/useful-shell/
 아래와 같이 결과를 확인 할 수 있습니다.
 
 ```
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-|                                                                                     DescribeInstances                                                                                    |
-+------------------------------------------------------------+------------------+----------------------+-----------+------------------------+----------+----------------+------------------+
-|  GWLBVPC-Appliance-10.254.12.102                           |  ap-northeast-1c |  i-08a76da6cfa9eb9c2 |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.254.12.102 |  54.199.252.186  |
-|  GWLBVPC-Appliance-10.254.12.101                           |  ap-northeast-1c |  i-01130255cdc13d19a |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.254.12.101 |  18.183.158.149  |
-|  N2SVPC-Private-B-10.11.22.102                             |  ap-northeast-1c |  i-0ae96dfdae54472fd |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.11.22.102  |  None            |
-|  N2SVPC-Private-B-10.11.22.101                             |  ap-northeast-1c |  i-0ccefe913a33175c5 |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.11.22.101  |  None            |
-|  VPC02-Private-B-10.2.22.102                               |  ap-northeast-1c |  i-06623017c61282eaa |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.2.22.102   |  3.115.14.25     |
-|  VPC01-Private-B-10.1.22.101                               |  ap-northeast-1c |  i-0c22eab7c0b387f83 |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.1.22.101   |  13.115.164.161  |
-|  VPC02-Private-B-10.2.22.101                               |  ap-northeast-1c |  i-093fdba8091fb0c6b |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.2.22.101   |  52.194.238.190  |
-|  VPC01-Private-B-10.1.22.102                               |  ap-northeast-1c |  i-0d836294742ac5bdd |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.1.22.102   |  18.181.77.249   |
-|  GWLBVPC-Appliance-10.254.11.101                           |  ap-northeast-1a |  i-0efb209a84dcd3388 |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.254.11.101 |  13.112.190.73   |
-|  GWLBVPC-Appliance-10.254.11.102                           |  ap-northeast-1a |  i-0513dad7d9423fa47 |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.254.11.102 |  52.69.76.12     |
-|  N2SVPC-Private-A-10.11.21.101                             |  ap-northeast-1a |  i-0203bfc09263493e2 |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.11.21.101  |  None            |
-|  N2SVPC-Private-A-10.11.21.102                             |  ap-northeast-1a |  i-0ae47b46e6170204b |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.11.21.102  |  None            |
-|  VPC01-Private-A-10.1.21.101                               |  ap-northeast-1a |  i-08ad57b556da819be |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.1.21.101   |  13.231.230.85   |
-|  VPC02-Private-A-10.2.21.102                               |  ap-northeast-1a |  i-0ec2592902f10350e |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.2.21.102   |  54.178.90.155   |
-|  VPC02-Private-A-10.2.21.101                               |  ap-northeast-1a |  i-0e647aae3511b6c58 |  t3.small |  ami-09ebacdc178ae23b7 |  running |  10.2.21.101   |  3.112.251.135   |
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|                                                                                    DescribeInstances                                                                                   |
++-------------------------------------------------------+------------------+----------------------+------------+------------------------+-------------+----------------+-----------------+
+|  GWLBVPC-Appliance-10.254.11.101                      |  ap-northeast-2a |  i-0e53c1595370536ac |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.254.11.101 |  3.36.124.171   |
+|  GWLBVPC-Appliance-10.254.11.102                      |  ap-northeast-2a |  i-0683c719c270c11b9 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.254.11.102 |  52.79.194.188  |
+|  N2SVPC-Private-A-10.11.21.102                        |  ap-northeast-2a |  i-0ccb671c609d92a0f |  t3.small  |  ami-0195322846474ddb9 |  terminated |  None          |  None           |
+|  N2SVPC-Private-A-10.11.21.101                        |  ap-northeast-2a |  i-04f6600a11f2d568f |  t3.small  |  ami-0195322846474ddb9 |  terminated |  None          |  None           |
+|  N2SVPC-Private-A-10.11.21.101                        |  ap-northeast-2a |  i-04079d7490efb71b2 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.11.21.101  |  None           |
+|  N2SVPC-Private-A-10.11.21.102                        |  ap-northeast-2a |  i-06887be3fa2daf34a |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.11.21.102  |  None           |
+|  VPC01-Private-A-10.1.21.102                          |  ap-northeast-2a |  i-0685213701f74711d |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.1.21.102   |  13.124.252.79  |
+|  VPC02-Private-A-10.2.21.101                          |  ap-northeast-2a |  i-019d20c34a59aaa91 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.2.21.101   |  3.35.140.217   |
+|  VPC01-Private-A-10.1.21.101                          |  ap-northeast-2a |  i-059790ccfcb6902b8 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.1.21.101   |  13.125.102.19  |
+|  VPC02-Private-A-10.2.21.102                          |  ap-northeast-2a |  i-091682bcbf7ec61a9 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.2.21.102   |  3.38.117.105   |
+|  GWLBVPC-Appliance-10.254.12.102                      |  ap-northeast-2b |  i-039485c78d4b1a81e |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.254.12.102 |  43.200.70.169  |
+|  N2SVPC-Private-B-10.11.22.101                        |  ap-northeast-2b |  i-043ec52692a255d0e |  t3.small  |  ami-0195322846474ddb9 |  terminated |  None          |  None           |
+|  GWLBVPC-Appliance-10.254.12.101                      |  ap-northeast-2b |  i-01336258ad94d60ff |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.254.12.101 |  3.38.177.248   |
+|  N2SVPC-Private-B-10.11.22.102                        |  ap-northeast-2b |  i-07922ac93d46ecc58 |  t3.small  |  ami-0195322846474ddb9 |  terminated |  None          |  None           |
+|  N2SVPC-Private-B-10.11.22.101                        |  ap-northeast-2b |  i-0f92545c86842f92a |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.11.22.101  |  None           |
+|  VPC02-Private-B-10.2.22.102                          |  ap-northeast-2b |  i-04705447e21e72f32 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.2.22.102   |  3.38.196.80    |
+|  VPC01-Private-B-10.1.22.102                          |  ap-northeast-2b |  i-02143e7c9703c1b9b |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.1.22.102   |  43.200.71.50   |
+|  N2SVPC-Private-B-10.11.22.102                        |  ap-northeast-2b |  i-0f822c9e5d99e404a |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.11.22.102  |  None           |
+|  VPC02-Private-B-10.2.22.101                          |  ap-northeast-2b |  i-0354949eeaeb050aa |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.2.22.101   |  3.37.28.18     |
+|  VPC01-Private-B-10.1.22.101                          |  ap-northeast-2b |  i-01daba6e46deec87f |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.1.22.101   |  3.38.187.82    |
+|  aws-cloud9-mycloud9-bae72d4b070b45ebbd1f9b45c848d6fe |  ap-northeast-2c |  i-04c7b1f40febf6c23 |  m5.xlarge |  ami-064777efad1575a54 |  running    |  172.31.35.101 |  54.180.93.63   |
++-------------------------------------------------------+------------------+----------------------+------------+------------------------+-------------+----------------+-----------------+
 ```
 
 session manager 명령을 통해 해당 인스턴스에 연결해 봅니다. (예. VPC01-Private-A-10.1.21.101)
@@ -517,7 +567,7 @@ PING aws.com (99.86.206.123) 56(84) bytes of data.
 Cloud9 터미널 1
 
 ```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance1
+#Appliance1 terminal
 sudo tcpdump -nvv 'port 6081' | grep 'ICMP'
 
 ```
@@ -525,7 +575,7 @@ sudo tcpdump -nvv 'port 6081' | grep 'ICMP'
 Cloud9 터미널 2
 
 ```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance2
+#Appliance2 terminal
 sudo tcpdump -nvv 'port 6081' | grep 'ICMP'
 
 ```
@@ -561,7 +611,7 @@ GWLB Design 4 랩에서는 외부에서 N2SVPC의 ALB의 공인 DNS A레코드�
 
 아래와 같은 도식으로 외부에서 내부로 웹서비스나 기타 퍼블릭 서비스를 제공할 수 있습니다.
 
-![](<.gitbook/assets/image (183).png>)
+![](<../.gitbook/assets/image (183).png>)
 
 1. 외부에 노출된 ALB DNS A 레코드로 접근 합니다.
 2. IGW에서 Ingress Routing을 통해 N2SVPC GWLB VPC Endpoint로 접근합니다.\
@@ -582,13 +632,13 @@ AWS의 Resource Group 구성과 System Manager RunBook을 통해서 , Shell을 �
 
 **`AWS 관리콘솔 - Resource Group & Tag Editor`** 를 실행하고, **`리소스 그룹 생성`**을 선택합니다.
 
-![](<.gitbook/assets/image (184).png>)
+![](<../.gitbook/assets/image (184).png>)
 
 아래와 같이 퀴리 기반 그룹을 생성합니다.
 
-![](<.gitbook/assets/image (185).png>)
+![](<../.gitbook/assets/image (185).png>)
 
-![](<.gitbook/assets/image (186).png>)
+![](<../.gitbook/assets/image (186).png>)
 
 * **`그룹 유형 : Cloudformation 스택기반`**
 * **`그룹화 기준 - Cloudformation 스택 : VPC01`**
@@ -606,17 +656,17 @@ AWS의 Resource Group 구성과 System Manager RunBook을 통해서 , Shell을 �
 
 생성된 Resource Group을 **`"저장된 리소스 그룹"`** 에서 확인해 봅니다.
 
-![](<.gitbook/assets/image (187).png>)
+![](<../.gitbook/assets/image (187).png>)
 
 **`AWS 관리콘솔 - System Manager`** 를 실행하고, **`"Run Command"`** 를 빠른 설정 메뉴에서 선택합니다.
 
 **`명령 실행`**을 선택합니다.
 
-![](<.gitbook/assets/image (188).png>)
+![](<../.gitbook/assets/image (188).png>)
 
 **`명령 실행`**에서 **`AWS-RunShellScript`** 를 선택합니다.
 
-![](<.gitbook/assets/image (189).png>)
+![](<../.gitbook/assets/image (189).png>)
 
 명령 파라미터에서 아래 Shell 값을 입력합니다.
 
@@ -638,47 +688,76 @@ exit;
 
 ```
 
-![](<.gitbook/assets/image (191).png>)
+![](<../.gitbook/assets/image (191).png>)
 
 대상에서 리소스그룹을 선택하고, 리소스 그룹은 앞서 생성한 "VPC01-Private-Instance", "VPC02-Private-Instance"를 선택합니다.
 
-![](<.gitbook/assets/image (190).png>)
+![](<../.gitbook/assets/image (190).png>)
 
 VPC01-Private-Instance, VPC02-Private-Instance를 각각 실행합니다.
 
 모두 실행하고 나면, 아래와 같이 명령기록에 Shell이 8개 인스턴스에 모두 실행된 것을 확인할 수 있습니다.
 
-![](<.gitbook/assets/image (192).png>)
+![](<../.gitbook/assets/image (192).png>)
 
 ### 15. ALB 구성
 
 이제 N2SVPC에서 VPC01,VPC02의 인스턴스 로드밸런서를 위한 ALB 구성을 하고, Target Group을 각각 VPC01,02로 지정합니다.
 
-**`AWS 관리콘솔 - EC2 - 로드밸런서 - Application Load Balancer`**를 선택합니다.
+**`AWS 관리콘솔 - EC2 - 로드밸런서 - Application Load Balancer`**를 선택하고 **`로드 밸런서 생성`**을 선택합니다.  Application Loadbalancer를 선택하고 생성합니다
 
-* **`이름 : "ALB-VPC01-TG"`** 와 같은 이름을 입력합니다.
+![](<../.gitbook/assets/image (203) (1) (1).png>)
+
+**기본구성**&#x20;
+
+* **`이름 : "ALB-VPC01"`** 와 같은 이름을 입력합니다.
 * **`체계 : "인터넷 경계"`** 를 선택합니다.
-* **`VPC - "N2SVPC"`** 를 선택합니다.
-* **`가용영역 - "N2SVPC-Public-Subnet-A,B"`**를 선택합니다.
+* **`IP 주소유형 - "IPv4"`** 를 선택합니다.
 
-![](<.gitbook/assets/image (193).png>)
+![](<../.gitbook/assets/image (208) (1).png>)
 
-보안 그룹 구성에서 기존 보안 그룹 **`"ALBSecuritryGroup"`**을 선택합니다. 이미 앞서 Cloudformation Stack에서 생성했습니다.
+**네트워크 매핑**&#x20;
 
-![](<.gitbook/assets/image (194).png>)
+* **`VPC : "N2SVPC"`** 와 같은 이름을 입력합니다.
+* **`매핑 : "ap-northeast-2a (N2SVPC-Public-Subnet-A), ap-northeast-2b(N2SVPC-Public-Subnet-B)"`** 를 선택합니다.
 
-라우팅 구성을 아래와 같이 구성합니다.
+![](<../.gitbook/assets/image (207) (1).png>)
 
-* **`대상그룹 - 이름 : "VPC01-TG" , "VPC02-TG"`** 등과 같은 이름으로 구성합니다.
-* **`대상그룹 - 대상 유형 : "IP"`** 를 선택합니다.
-* **`상태검사 - 경로 : /ec2meta-webpage/index.php`** 를 입력합니다.\
-  (앞서 System Manager - RunCommand 로 8개 인스턴스에 패키지 구성을 완료한 경로입니다.)
+**`보안그룹`**
 
-![](<.gitbook/assets/image (195).png>)
+* **`보안 그룹 : "ALBSecurityGroup"`** 를 선택합니다
+
+![](<../.gitbook/assets/image (203) (1).png>)
+
+리스너 및 라우팅
+
+Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합니다.&#x20;
+
+![](<../.gitbook/assets/image (209) (1) (1).png>)
+
+그룹 세부 정보 지정
+
+![](<../.gitbook/assets/image (205) (1).png>)
+
+![](<../.gitbook/assets/image (206) (1).png>)
+
+* 대상유형 선택 - IP 주소 (다른 VPC의 인스턴스로 타겟그룹을 지정하기 위해서는 IP주소만 가능합니다)
+* 대상그룹 이름 - "VPC01-TG"**`, "VPC02-TG"`**
+* 프로토콜 - HTTP / 80
+* VPC - N2SVPC 선택
+* 프로토콜 버전 - HTTP1
+* 상태검사 프로토콜 - HTTP
+* 상태검사 경로 - 아래를 복사해서 입력합니다.&#x20;
+
+```
+/ec2meta-webpage/index.php
+```
+
+**대상등록**
 
 대상 등록에서는 N2SVPC 가 아닌, VPC01,02의 인스턴스가 Target이 되어야 합니다.
 
-* 네트워크 : 다른 프라이빗 IP 주소 를 선택합니다.
+* 네트워크 : **`다른 프라이빗 IP 주소`** 를 선택합니다.
 * IP : VPC01,02 의 IP 주소를 입력합니다.
 * 목록에 추가를 선택하여 VPC01,VPC02의 대상등록을 완료합니다.
 
@@ -696,15 +775,28 @@ VPC01-Private-Instance, VPC02-Private-Instance를 각각 실행합니다.
 10.2.22.102
 ```
 
-![](<.gitbook/assets/image (196).png>)
+![](<../.gitbook/assets/image (209) (1).png>)
+
+대상 그룹 생성이 완료되면 Application Load Balancer 생성 메뉴창으로 다시 돌아갑니다
+
+아래 리스너 및 라우팅 메뉴에서, 앞서 생성한 대상그룹을 선택합니다
+
+* ALB-VPC01 - **`VCP01-TG`**
+* ALB-VPC02 - **`VPC02-TG`**
+
+![](<../.gitbook/assets/image (203).png>)
+
+아래에서 처럼 ALB 구성의 최종 구성 정보를 확인하고 , ALB를 생성합니다
+
+![](<../.gitbook/assets/image (204).png>)
 
 **`AWS 관리콘솔 - EC2 - 로드밸런서`** 에서 생성한 N2SVPC 의 ALB로드밸런서를 확인합니다. **`ALB DNS A 레코드 값`**을 복사해 둡니다.
 
-![](<.gitbook/assets/image (197).png>)
+![](<../.gitbook/assets/image (197).png>)
 
 **`AWS 관리콘솔 - EC2 - 로드밸런서`** 에서  VPC01,VPC02 를 대상그룹으로 생성한 Target 인스턴스들이 "Healthy" 상태인지 확인합니다.
 
-![](<.gitbook/assets/image (199).png>)
+![](<../.gitbook/assets/image (199).png>)
 
 ### 16. ALB 트래픽 확인
 
@@ -712,7 +804,7 @@ VPC01-Private-Instance, VPC02-Private-Instance를 각각 실행합니다.
 
 **`AWS 관리콘솔 - EC2- 네트워크 및 보안 - 네트워크 인터페이스 - ALB-VPC01-TG`** 확인.
 
-![](<.gitbook/assets/image (200).png>)
+![](<../.gitbook/assets/image (200).png>)
 
 이제 다시 Cloud9 콘솔에서 앞서 실행 해 둔 Applicance 터미널에서 아래를 실행합니다.
 
@@ -734,7 +826,7 @@ sudo tcpdump -nvv 'port 6081' | grep '10.11.11.99'
 http://{ALB-DNS-A-Record}/ec2meta-webpage/index.php
 ```
 
-![](<.gitbook/assets/image (201).png>)
+![](<../.gitbook/assets/image (201).png>)
 
 &#x20;웹브라우저에서 ALB DNS A 레코드와 URL을 입력해서 실행시키면, GWLB에 연결해 둔 Appliance의 TCP Dump값에서 패킷을 통과하는 것을 확인 할 수 있습니다.
 
@@ -763,7 +855,7 @@ VPC02의 인스턴스들과 ALB 로드밸런스도 위와 같은 방법으로 �
 
 로드 밸런서를 삭제 합니다. (**ALB-VPC01-TG, ALB-VPC02-TG 만 삭제합니다.**)
 
-![](<.gitbook/assets/image (202).png>)
+![](<../.gitbook/assets/image (202).png>)
 
 **`AWS 관리 콘솔 - 로드밸런싱 - 로드밸런서 - ALB-VPC01-TG, ALB-VPC02-TG 선택 - 작업 - 삭제`**&#x20;
 
