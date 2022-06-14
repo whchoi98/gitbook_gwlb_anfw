@@ -14,7 +14,7 @@ ALB(Application Load Balancer)를 ANFW를 연계하는 VPC에 배치해서, 내�
 
 아래 그림은 목표 구성도 입니다.
 
-![](<../.gitbook/assets/image (209) (1).png>)
+![](<../.gitbook/assets/image (209) (1) (1).png>)
 
 ## Cloudformation기반 VPC 배포
 
@@ -137,7 +137,7 @@ aws cloudformation deploy \
 
 **`AWS 관리 콘솔 - VPC 대시 보드 - VPC`**
 
-![](<../.gitbook/assets/image (218) (1).png>)
+![](<../.gitbook/assets/image (218) (1) (1).png>)
 
 **`AWS 관리 콘솔 - VPC 대시 보드 - 서브넷`**
 
@@ -159,7 +159,7 @@ aws cloudformation deploy \
 
 TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC에서 외부로 향하는) 에 대한 각 테이블을 확인하고 , 이후 Ingress (IGW에서 내부로 향하는)에 대한 테이블을 확인해 봅니다.
 
-![](<../.gitbook/assets/image (205) (1) (1).png>)
+![](<../.gitbook/assets/image (205) (1) (1) (1).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"ANFW-VPC01-Private-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
@@ -191,7 +191,7 @@ TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC�
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-IGW-Ingress-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<../.gitbook/assets/image (212) (1).png>)
+![](<../.gitbook/assets/image (212) (1) (1).png>)
 
 ## Traffic 확인
 
@@ -199,7 +199,7 @@ TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC�
 
 아래와 같은 트래픽 흐름으로 VPC 에서 외부로 트래픽을 처리하게 됩니다.
 
-![](<../.gitbook/assets/image (213) (1).png>)
+![](<../.gitbook/assets/image (213) (1) (1).png>)
 
 1. ANFW-VPC01,02 Private Subnet Instance에서 TGW 로 트래픽 전송 (Private Subnet Routing Table 참조)
 2. TGW에서 ANFW-VPC01의 Attachment 로 연결된 라우팅 테이블을 참조
@@ -268,7 +268,7 @@ ping www.aws.com
 
 아래와 같은 도식으로 외부에서 내부로 웹서비스나 기타 퍼블릭 서비스를 제공할 수 있습니다.
 
-![](<../.gitbook/assets/image (205) (1).png>)
+![](<../.gitbook/assets/image (205) (1) (1).png>)
 
 1. 외부에 노출된 ALB DNS A 레코드로 접근 합니다.
 2. IGW에서 Ingress Routing을 통해 ANFW-N2SVPC VPC Endpoint로 접근합니다.\
@@ -292,9 +292,9 @@ AWS의 Resource Group 구성과 System Manager RunBook을 통해서 , Shell을 �
 
 아래와 같이 퀴리 기반 그룹을 생성합니다.
 
-![](<../.gitbook/assets/image (213).png>)
+![](<../.gitbook/assets/image (213) (1).png>)
 
-![](<../.gitbook/assets/image (209).png>)
+![](<../.gitbook/assets/image (209) (1).png>)
 
 * **`그룹 유형 : Cloudformation 스택기반`**
 * **`그룹화 기준 - Cloudformation 스택 : ANFW-VPC01`**
@@ -348,7 +348,7 @@ exit;
 
 대상에서 리소스그룹을 선택하고, 리소스 그룹은 앞서 생성한 "ANFW-VPC01-Private-Instance", "ANFW-VPC02-Private-Instance"를 선택합니다.
 
-![](<../.gitbook/assets/image (212).png>)
+![](<../.gitbook/assets/image (212) (1).png>)
 
 ANFW-VPC01-Private-Instance, ANFW-VPC02-Private-Instance를 각각 실행합니다.
 
@@ -377,19 +377,19 @@ ANFW-VPC01-Private-Instance, ANFW-VPC02-Private-Instance를 각각 실행합니�
 * **`VPC : "ANFW-N2SVPC"`** 와 같은 이름을 입력합니다.
 * **`매핑 : "ap-northeast-1a (ANFW-N2SVPC-Public-Subnet-A), ap-northeast-1c(ANFW-N2SVPC-Public-Subnet-B)"`** 를 선택합니다.
 
-![](<../.gitbook/assets/image (205).png>)
+![](<../.gitbook/assets/image (205) (1).png>)
 
 **보안그룹**
 
 * **`보안 그룹 : "ALBSecurityGroup"`** 를 선택합니다
 
-![](<../.gitbook/assets/image (218).png>)
+![](<../.gitbook/assets/image (218) (1).png>)
 
 리스너 및 라우팅
 
 Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합니다.
 
-![](<../.gitbook/assets/image (206).png>)
+![](<../.gitbook/assets/image (206) (1).png>)
 
 **그룹 세부 정보 지정**
 
@@ -468,7 +468,7 @@ VPC02의 인스턴스들과 ALB 로드밸런스도 위와 같은 방법으로 �
 
 ### 13. Network Firewall 확인.
 
-Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었는지 확인해 봅니다
+Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었는지 확인해 봅니다. Cloudformation으로 사전에 Rule을 배포해 두었습니다.&#x20;
 
 * VPC - Amazon Network Firewall - 방화벽
 
@@ -476,7 +476,77 @@ Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었�
 
 ![](<../.gitbook/assets/image (220).png>)
 
-14\. Network Firewall 정책 적용
+14\. Network Firewall 정책
+
+이제 생성된 Firewall과 Firewall Policy에 Rule(보안 규칙)을 설정하여, 상세한 보안 규칙들을 설정해 봅니다.
+
+먼저 Firewall 구성은 아래와 같은 방식으로 구성할 수 있습니다.
+
+![](<../.gitbook/assets/image (213).png>)
+
+15\. Stateless Rule 적용
+
+앞서 생성한 ALB-VPC01, ALB-VPC02 웹서비스 중에 1개의 ALB를 Block 해 봅니다
+
+먼저 ALB의 실제 내부 주소를 확인합니다
+
+* VPC - 네트워크 및 보안 - 네트워크 인터페이스 - ALB-VPC02 -프라이빗 IPv4 확인
+
+![](<../.gitbook/assets/image (212).png>)
+
+Stateless 정책을 생성하고 적용합니다
+
+* VPC - 방화벽 정책 - 생성된 정책 - Stateless Rule Group (상태 비저장 규칙 그룹 - (무상태 규칙 그룹 생성
+
+![](<../.gitbook/assets/image (218).png>)
+
+* 이름 :  Stateless-Rule
+* 용량 : 100
+
+![](<../.gitbook/assets/image (205).png>)
+
+* 우선순위 : 11
+* 프로토콜 : All
+* 소스 : 모든 IP 주소
+* 대상 : 사용자 지정 / ALB-VPC02 의 네트워크 인터페이스 IP를 입력
+* 작업 - 삭제
+* 규칙추가 선택
+
+![](<../.gitbook/assets/image (209).png>)
+
+* 생성 및 추가 선택
+
+ALB-VPC02 DNS 주소를 입력하고 Cloud9 터미널에서 Curl을 실행하거나,브라우저에서 아래 주소를 입력해 봅니다.
+
+* ALB-VPC01, 02 주소 확인 및 보안 적용 확인&#x20;
+
+```
+#ALB-VPC01
+export ALBVPC01URL=$(aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,Scheme,DNSName,VpcId]" --output text --region ap-northeast-1 | awk '/ALB-VPC01-/ {print $3}')
+echo $ALBVPC01URL
+
+#ALB-VPC02
+export ALBVPC02URL=$(aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,Scheme,DNSName,VpcId]" --output text --region ap-northeast-1 | awk '/ALB-VPC02-/ {print $3}')
+echo $ALBVPC02URL
+
+curl -v  $ALBVPC01URL/ec2meta-webpage/index.php -I
+curl -v  $ALBVPC02URL/ec2meta-webpage/index.php -I
+
+```
+
+{% hint style="info" %}
+ALBVPC01 은 접속이 허용되고, ALBVPC02는 접속되지 않습니다
+{% endhint %}
+
+확인 후 보안 룰을 삭제합니다.&#x20;
+
+* Amazon Network Firewall - 방화벽 - 방화벽 정책 - 상태비저장 규칙 그룹
+
+![](<../.gitbook/assets/image (206).png>)
+
+* Amazon Network Firewall - Network Firewall 규칙 그룹 - Stateless-Rule 선택 - 삭제
+
+![](<../.gitbook/assets/image (204).png>)
 
 
 
