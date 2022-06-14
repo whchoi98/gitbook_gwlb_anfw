@@ -706,7 +706,7 @@ VPC01-Private-Instance, VPC02-Private-Instance를 각각 실행합니다.
 
 **`AWS 관리콘솔 - EC2 - 로드밸런서 - Application Load Balancer`**를 선택하고 **`로드 밸런서 생성`**을 선택합니다.  Application Loadbalancer를 선택하고 생성합니다
 
-![](<.gitbook/assets/image (203) (1).png>)
+![](<.gitbook/assets/image (203) (1) (1).png>)
 
 **기본구성**&#x20;
 
@@ -727,13 +727,13 @@ VPC01-Private-Instance, VPC02-Private-Instance를 각각 실행합니다.
 
 * **`보안 그룹 : "ALBSecurityGroup"`** 를 선택합니다
 
-![](<.gitbook/assets/image (203).png>)
+![](<.gitbook/assets/image (203) (1).png>)
 
 리스너 및 라우팅
 
 Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합니다.&#x20;
 
-![](<.gitbook/assets/image (209).png>)
+![](<.gitbook/assets/image (209) (1).png>)
 
 그룹 세부 정보 지정
 
@@ -742,7 +742,7 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 ![](<.gitbook/assets/image (206).png>)
 
 * 대상유형 선택 - IP 주소 (다른 VPC의 인스턴스로 타겟그룹을 지정하기 위해서는 IP주소만 가능합니다)
-* 대상그룹 이름 - "VPC01-TG"
+* 대상그룹 이름 - "VPC01-TG"**`, "VPC02-TG"`**
 * 프로토콜 - HTTP / 80
 * VPC - N2SVPC 선택
 * 프로토콜 버전 - HTTP1
@@ -755,13 +755,9 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 
 **대상등록**
 
-****
-
-![](<.gitbook/assets/image (204).png>)
-
 대상 등록에서는 N2SVPC 가 아닌, VPC01,02의 인스턴스가 Target이 되어야 합니다.
 
-* 네트워크 : 다른 프라이빗 IP 주소 를 선택합니다.
+* 네트워크 : **`다른 프라이빗 IP 주소`** 를 선택합니다.
 * IP : VPC01,02 의 IP 주소를 입력합니다.
 * 목록에 추가를 선택하여 VPC01,VPC02의 대상등록을 완료합니다.
 
@@ -779,7 +775,20 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 10.2.22.102
 ```
 
-![](<.gitbook/assets/image (196).png>)
+![](<.gitbook/assets/image (209).png>)
+
+대상 그룹 생성이 완료되면 Application Load Balancer 생성 메뉴창으로 다시 돌아갑니다
+
+아래 리스너 및 라우팅 메뉴에서, 앞서 생성한 대상그룹을 선택합니다
+
+* ALB-VPC01 - **`VCP01-TG`**
+* ALB-VPC02 - **`VPC02-TG`**
+
+![](<.gitbook/assets/image (203).png>)
+
+아래에서 처럼 ALB 구성의 최종 구성 정보를 확인하고 , ALB를 생성합니다
+
+![](<.gitbook/assets/image (204).png>)
 
 **`AWS 관리콘솔 - EC2 - 로드밸런서`** 에서 생성한 N2SVPC 의 ALB로드밸런서를 확인합니다. **`ALB DNS A 레코드 값`**을 복사해 둡니다.
 
