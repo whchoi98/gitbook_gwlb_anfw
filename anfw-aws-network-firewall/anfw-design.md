@@ -14,7 +14,7 @@ ALB(Application Load Balancer)를 ANFW를 연계하는 VPC에 배치해서, 내�
 
 아래 그림은 목표 구성도 입니다.
 
-![](<../.gitbook/assets/image (209).png>)
+![](<../.gitbook/assets/image (209) (1).png>)
 
 ## Cloudformation기반 VPC 배포
 
@@ -137,11 +137,11 @@ aws cloudformation deploy \
 
 **`AWS 관리 콘솔 - VPC 대시 보드 - VPC`**
 
-![](<../.gitbook/assets/image (218).png>)
+![](<../.gitbook/assets/image (218) (1).png>)
 
 **`AWS 관리 콘솔 - VPC 대시 보드 - 서브넷`**
 
-![](<../.gitbook/assets/image (210).png>)
+![](<../.gitbook/assets/image (210) (1).png>)
 
 ### 5. TransitGateway 배포
 
@@ -159,45 +159,45 @@ aws cloudformation deploy \
 
 TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC에서 외부로 향하는) 에 대한 각 테이블을 확인하고 , 이후 Ingress (IGW에서 내부로 향하는)에 대한 테이블을 확인해 봅니다.
 
-![](<../.gitbook/assets/image (205) (1).png>)
+![](<../.gitbook/assets/image (205) (1) (1).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"ANFW-VPC01-Private-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<../.gitbook/assets/image (215).png>)
+![](<../.gitbook/assets/image (215) (1).png>)
 
 **`AWS 관리콘솔 - TransitGateway`** 를 선택하고, **`"ANFWTGW"`** 라는 이름으로 **`TransitGateway`**가 정상적으로 생성되었는지 확인합니다.
 
-![](<../.gitbook/assets/image (214).png>)
+![](<../.gitbook/assets/image (214) (1).png>)
 
 **`AWS 관리콘솔 - TransitGateway - TransitGateway Attachment(연결)`** 을 선택하고, 각 VPC에 연결된 Attachment를 확인해 봅니다.
 
-![](<../.gitbook/assets/image (216).png>)
+![](<../.gitbook/assets/image (216) (1).png>)
 
 **`AWS 관리콘솔 - TransitGateway - TransitGateway 라우팅테이블`**을 선택하고, **`"GWLBTGW-RT-VPC-OUT"`** 을 선택해서, TGW에서 트래픽이 외부로 가는 라우팅을 확인해 봅니다.
 
-![](<../.gitbook/assets/image (208).png>)
+![](<../.gitbook/assets/image (208) (1).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-Private-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<../.gitbook/assets/image (207).png>)
+![](<../.gitbook/assets/image (207) (1).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-Public-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<../.gitbook/assets/image (217).png>)
+![](<../.gitbook/assets/image (217) (1).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-GWLBe-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<../.gitbook/assets/image (211).png>)
+![](<../.gitbook/assets/image (211) (1).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-IGW-Ingress-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<../.gitbook/assets/image (212).png>)
+![](<../.gitbook/assets/image (212) (1).png>)
 
 ### 7. 트래픽 확인.&#x20;
 
 아래와 같은 트래픽 흐름으로 VPC 에서 외부로 트래픽을 처리하게 됩니다.
 
-![](<../.gitbook/assets/image (213).png>)
+![](<../.gitbook/assets/image (213) (1).png>)
 
 1. ANFW-VPC01,02 Private Subnet Instance에서 TGW 로 트래픽 전송 (Private Subnet Routing Table 참조)
 2. TGW에서 ANFW-VPC01의 Attachment 로 연결된 라우팅 테이블을 참조
@@ -266,7 +266,7 @@ ping www.aws.com
 
 아래와 같은 도식으로 외부에서 내부로 웹서비스나 기타 퍼블릭 서비스를 제공할 수 있습니다.
 
-![](<../.gitbook/assets/image (205).png>)
+![](<../.gitbook/assets/image (205) (1).png>)
 
 1. 외부에 노출된 ALB DNS A 레코드로 접근 합니다.
 2. IGW에서 Ingress Routing을 통해 ANFW-N2SVPC VPC Endpoint로 접근합니다.\
@@ -288,14 +288,14 @@ AWS의 Resource Group 구성과 System Manager RunBook을 통해서 , Shell을 �
 
 아래와 같이 퀴리 기반 그룹을 생성합니다.
 
-![](<../.gitbook/assets/image (185).png>)
+![](<../.gitbook/assets/image (213).png>)
 
-![](<../.gitbook/assets/image (186).png>)
+![](<../.gitbook/assets/image (209).png>)
 
 * **`그룹 유형 : Cloudformation 스택기반`**
 * **`그룹화 기준 - Cloudformation 스택 : ANFW-VPC01`**
 * **`그룹화 기준 - Cloudformation 스택의 리소스 유형 : AWS::EC2::Instance`**
-* **`그룹리소스 미리보기 선택`**&#x20;
+* **`그룹리소스 미리보기 선택`**
 * **`그룹 세부 정보 : ANFW-VPC01-Private-Instance`**
 
 반복해서 VPC02 도 구성합니다.
@@ -303,12 +303,12 @@ AWS의 Resource Group 구성과 System Manager RunBook을 통해서 , Shell을 �
 * **`그룹 유형 : Cloudformation 스택기반`**
 * **`그룹화 기준 - Cloudformation 스택 : ANFW-VPC02`**
 * **`그룹화 기준 - Cloudformation 스택의 리소스 유형 : AWS::EC2::Instance`**
-* **`그룹리소스 미리보기 선택`**&#x20;
+* **`그룹리소스 미리보기 선택`**
 * **`그룹 세부 정보 : ANFW-VPC02-Private-Instance`**
 
 생성된 Resource Group을 **`"저장된 리소스 그룹"`** 에서 확인해 봅니다.
 
-![](<../.gitbook/assets/image (187).png>)
+![](<../.gitbook/assets/image (219).png>)
 
 **`AWS 관리콘솔 - System Manager`** 를 실행하고, **`"Run Command"`** 를 빠른 설정 메뉴에서 선택합니다.
 
@@ -344,69 +344,107 @@ exit;
 
 대상에서 리소스그룹을 선택하고, 리소스 그룹은 앞서 생성한 "ANFW-VPC01-Private-Instance", "ANFW-VPC02-Private-Instance"를 선택합니다.
 
-![](<../.gitbook/assets/image (190).png>)
+![](<../.gitbook/assets/image (212).png>)
 
 ANFW-VPC01-Private-Instance, ANFW-VPC02-Private-Instance를 각각 실행합니다.
 
 모두 실행하고 나면, 아래와 같이 명령기록에 Shell이 8개 인스턴스에 모두 실행된 것을 확인할 수 있습니다.
 
-![](<../.gitbook/assets/image (192).png>)
+![](<../.gitbook/assets/image (220).png>)
 
 ### 15. ALB 구성
 
 이제 N2SVPC에서 VPC01,VPC02의 인스턴스 로드밸런서를 위한 ALB 구성을 하고, Target Group을 각각 VPC01,02로 지정합니다.
 
-**`AWS 관리콘솔 - EC2 - 로드밸런서 - Application Load Balancer`**를 선택합니다.
+`AWS 관리콘솔 - EC2 - 로드밸런서 - Application Load Balancer`를 선택하고 `로드 밸런서 생성`을 선택합니다. Application Loadbalancer를 선택하고 생성합니다
 
-* **`이름 : "ALB-VPC01-TG"`** 와 같은 이름을 입력합니다.
+![](<../.gitbook/assets/image (208).png>)
+
+기본 구성&#x20;
+
+* **`이름 : "ALB-VPC01"`** 와 같은 이름을 입력합니다.
 * **`체계 : "인터넷 경계"`** 를 선택합니다.
-* **`VPC - "N2SVPC"`** 를 선택합니다.
-* **`가용영역 - "N2SVPC-Public-Subnet-A,B"`**를 선택합니다.
+* **`IP 주소유형 - "IPv4"`** 를 선택합니다.
 
-![](<../.gitbook/assets/image (193).png>)
+![](<../.gitbook/assets/image (210).png>)
 
-보안 그룹 구성에서 기존 보안 그룹 **`"ALBSecuritryGroup"`**을 선택합니다. 이미 앞서 Cloudformation Stack에서 생성했습니다.
+**네트워크 매핑**
 
-![](<../.gitbook/assets/image (194).png>)
+* **`VPC : "ANFW-N2SVPC"`** 와 같은 이름을 입력합니다.
+* **`매핑 : "ap-northeast-1a (ANFW-N2SVPC-Public-Subnet-A), ap-northeast-1c(ANFW-N2SVPC-Public-Subnet-B)"`** 를 선택합니다.
 
-라우팅 구성을 아래와 같이 구성합니다.
+![](<../.gitbook/assets/image (205).png>)
 
-* **`대상그룹 - 이름 : "VPC01-TG" , "VPC02-TG"`** 등과 같은 이름으로 구성합니다.
-* **`대상그룹 - 대상 유형 : "IP"`** 를 선택합니다.
-* **`상태검사 - 경로 : /ec2meta-webpage/index.php`** 를 입력합니다.\
-  (앞서 System Manager - RunCommand 로 8개 인스턴스에 패키지 구성을 완료한 경로입니다.)
+**보안그룹**
 
-![](<../.gitbook/assets/image (195).png>)
+* **`보안 그룹 : "ALBSecurityGroup"`** 를 선택합니다
 
-대상 등록에서는 N2SVPC 가 아닌, VPC01,02의 인스턴스가 Target이 되어야 합니다.
+![](<../.gitbook/assets/image (218).png>)
 
-* 네트워크 : 다른 프라이빗 IP 주소 를 선택합니다.
-* IP : VPC01,02 의 IP 주소를 입력합니다.
-* 목록에 추가를 선택하여 VPC01,VPC02의 대상등록을 완료합니다.
+리스너 및 라우팅
+
+Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합니다.
+
+![](<../.gitbook/assets/image (206).png>)
+
+**그룹 세부 정보 지정**
+
+* 대상유형 선택 - IP 주소 (다른 VPC의 인스턴스로 타겟그룹을 지정하기 위해서는 IP주소만 가능합니다)
+* 대상그룹 이름 - **`"ANFW-VPC01-TG", "ANFW-VPC02-TG"`**
+* 프로토콜 - HTTP / 80
+* VPC - N2SVPC 선택
+* 프로토콜 버전 - HTTP1
+* 상태검사 프로토콜 - HTTP
+* 상태검사 경로 - 아래를 복사해서 입력합니다.
 
 ```
-#VPC01 IP address
+/ec2meta-webpage/index.php
+```
+
+![](<../.gitbook/assets/image (207).png>)
+
+**대상등록**
+
+대상 등록에서는 ANFW-N2SVPC 가 아닌, ANFW-VPC01,02의 인스턴스IP가 Target이 되어야 합니다.
+
+* 네트워크 : **`다른 프라이빗 IP 주소`** 를 선택합니다.
+* IP : ANFW-VPC01,02 의 IP 주소를 입력합니다.
+* 목록에 추가를 선택하여 ANFW-VPC01,VPC02의 대상등록을 완료합니다.
+
+```
+#ANFW-VPC01 IP address
 10.1.21.101
 10.1.21.102
 10.1.22.101
 10.1.22.102
 
-#VPC02 IP address
+#ANFW-VPC02 IP address
 10.2.21.101
 10.2.21.102
 10.2.22.101
 10.2.22.102
 ```
 
-![](<../.gitbook/assets/image (196).png>)
+![](<../.gitbook/assets/image (217).png>)
 
-**`AWS 관리콘솔 - EC2 - 로드밸런서`** 에서 생성한 N2SVPC 의 ALB로드밸런서를 확인합니다. **`ALB DNS A 레코드 값`**을 복사해 둡니다.
+대상 그룹 생성이 완료되면 Application Load Balancer 생성 메뉴창으로 다시 돌아갑니다
 
-![](<../.gitbook/assets/image (197).png>)
+아래 리스너 및 라우팅 메뉴에서, 앞서 생성한 대상그룹을 선택합니다
 
-**`AWS 관리콘솔 - EC2 - 로드밸런서`** 에서  VPC01,VPC02 를 대상그룹으로 생성한 Target 인스턴스들이 "Healthy" 상태인지 확인합니다.
+* ALB-VPC01 - **`ANFW-VPC01-TG`**
+* ALB-VPC02 - **`ANFW-VPC02-TG`**
 
-![](<../.gitbook/assets/image (199).png>)
+![](<../.gitbook/assets/image (216).png>)
+
+ALB 구성의 최종 구성 정보를 확인하고 , ALB를 생성합니다.&#x20;
+
+**`AWS 관리콘솔 - EC2 - 로드밸런서`** 에서 생성한 ANFW-VPC01,02 의 ALB로드밸런서를 확인합니다. **`ALB DNS A 레코드 값`**을 복사해 둡니다.
+
+![](<../.gitbook/assets/image (214).png>)
+
+**`AWS 관리콘솔 - EC2 - 로드밸런서`** 에서 ANFW-VPC01,VPC02 를 대상그룹으로 생성한 Target 인스턴스들이 "Healthy" 상태인지 확인합니다.
+
+![](<../.gitbook/assets/image (211).png>)
 
 ### 16. ALB 트래픽 확인
 

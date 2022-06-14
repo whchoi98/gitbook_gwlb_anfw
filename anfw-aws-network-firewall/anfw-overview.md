@@ -8,7 +8,7 @@ description: 'update : 2022-06-12'
 
 AWS Network Firewall은 Amazon Virtual Private Cloud (Amazon VPC)에서 생성 한 가상 사설 클라우드 (VPC)를위한 Stateless,Stateful 기반 관리 형 네트워크 방화벽 및 IDS/IPS 서비스입니다.
 
-![](<../.gitbook/assets/image (210) (1).png>)
+![](<../.gitbook/assets/image (210) (1) (1).png>)
 
 ## 장점
 
