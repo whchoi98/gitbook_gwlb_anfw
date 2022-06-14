@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2022-06-12'
+description: 'Update : 2022-06-12 / 2h'
 ---
 
 # ANFW Design
@@ -552,15 +552,31 @@ ALBVPC01 은 접속이 허용되고, ALBVPC02는 접속되지 않습니다
 
 &#x20;Cloudformation으로 배포된 Stateful Rule에 ALB-VPC02 만 허용하도록 변경합니다. &#x20;
 
+* VPC - Amazon Network Firewall - allpermit 규칙을 선택합니다
+
 ![](<../.gitbook/assets/image (224).png>)
+
+* 규칙편집을 선택합니다
 
 ![](<../.gitbook/assets/image (207).png>)
 
+* 편집을 선택합니다
+
 ![](<../.gitbook/assets/image (223).png>)
+
+* 프로토콜 - IP
+* 소스 - ANY
+* 대상 - 앞서 구성했던 ALB-VPC02의 ENI 주소 2개를 입력합니다
+* 트래픽 방향 - 임의
+* 작업 - 통과
 
 ![](<../.gitbook/assets/image (219).png>)
 
+* 기존 IP Allpermit Rule은 작업 - 삭제로 변경합니다
+
 ![](<../.gitbook/assets/image (214).png>)
+
+변경이 완료되면 아래와 같이 변경됩니다.&#x20;
 
 ![](<../.gitbook/assets/image (220).png>)
 
