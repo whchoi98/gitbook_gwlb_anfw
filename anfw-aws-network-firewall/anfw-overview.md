@@ -8,9 +8,7 @@ description: 'update : 2022-06-12'
 
 AWS Network Firewall은 Amazon Virtual Private Cloud (Amazon VPC)에서 생성 한 가상 사설 클라우드 (VPC)를위한 Stateless,Stateful 기반 관리 형 네트워크 방화벽 및 IDS/IPS 서비스입니다.
 
-![](<../.gitbook/assets/image (210) (1) (1).png>)
-
-## 장점
+![](<../.gitbook/assets/image (210) (1) (1) (1).png>)
 
 네트워크 방화벽을 사용하면 VPC 내부 트래픽을 필터링 할 수 있습니다. 터넷 게이트웨이, NAT 게이트웨이 또는 VPN 또는 AWS Direct Connect를 통해 들어오고 나가는 트래픽 필터링이 포함됩니다. 네트워크 방화벽은 Stateful 기반 보안 위해 오픈 소스 IPS (침입 방지 시스템) 인 Suricata를 사용합니다. 네트워크 방화벽은 Suricata 호환 규칙을 지원합니다.
 

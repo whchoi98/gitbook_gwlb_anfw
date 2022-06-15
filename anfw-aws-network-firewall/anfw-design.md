@@ -137,11 +137,11 @@ aws cloudformation deploy \
 
 **`AWS 관리 콘솔 - VPC 대시 보드 - VPC`**
 
-![](<../.gitbook/assets/image (218) (1) (1).png>)
+![](<../.gitbook/assets/image (218) (1) (1) (1).png>)
 
 **`AWS 관리 콘솔 - VPC 대시 보드 - 서브넷`**
 
-![](<../.gitbook/assets/image (210) (1).png>)
+![](<../.gitbook/assets/image (210) (1) (1).png>)
 
 ### 5. TransitGateway 배포
 
@@ -163,7 +163,7 @@ TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC�
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"ANFW-VPC01-Private-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<../.gitbook/assets/image (215) (1).png>)
+![](<../.gitbook/assets/image (215) (1) (1).png>)
 
 **`AWS 관리콘솔 - TransitGateway`** 를 선택하고, **`"ANFWTGW"`** 라는 이름으로 **`TransitGateway`**가 정상적으로 생성되었는지 확인합니다.
 
@@ -183,11 +183,11 @@ TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC�
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-Public-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<../.gitbook/assets/image (217) (1) (1).png>)
+![](<../.gitbook/assets/image (217) (1) (1) (1).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-GWLBe-Subnet-A,B-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<../.gitbook/assets/image (211) (1).png>)
+![](<../.gitbook/assets/image (211) (1) (1).png>)
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-IGW-Ingress-RT"`**의 **`라우팅`**을 확인합니다.
 
@@ -199,7 +199,7 @@ TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC�
 
 아래와 같은 트래픽 흐름으로 VPC 에서 외부로 트래픽을 처리하게 됩니다.
 
-![](<../.gitbook/assets/image (213) (1) (1).png>)
+![](<../.gitbook/assets/image (213) (1) (1) (1).png>)
 
 1. ANFW-VPC01,02 Private Subnet Instance에서 TGW 로 트래픽 전송 (Private Subnet Routing Table 참조)
 2. TGW에서 ANFW-VPC01의 Attachment 로 연결된 라우팅 테이블을 참조
@@ -292,7 +292,7 @@ AWS의 Resource Group 구성과 System Manager RunBook을 통해서 , Shell을 �
 
 아래와 같이 퀴리 기반 그룹을 생성합니다.
 
-![](<../.gitbook/assets/image (213) (1).png>)
+![](<../.gitbook/assets/image (213) (1) (1).png>)
 
 ![](<../.gitbook/assets/image (209) (1) (1).png>)
 
@@ -354,7 +354,7 @@ ANFW-VPC01-Private-Instance, ANFW-VPC02-Private-Instance를 각각 실행합니�
 
 모두 실행하고 나면, 아래와 같이 명령기록에 Shell이 8개 인스턴스에 모두 실행된 것을 확인할 수 있습니다.
 
-![](<../.gitbook/assets/image (222).png>)
+![](<../.gitbook/assets/image (222) (1).png>)
 
 ### 11. ALB 구성
 
@@ -370,7 +370,7 @@ ANFW-VPC01-Private-Instance, ANFW-VPC02-Private-Instance를 각각 실행합니�
 * **`체계 : "인터넷 경계"`** 를 선택합니다.
 * **`IP 주소유형 - "IPv4"`** 를 선택합니다.
 
-![](<../.gitbook/assets/image (210).png>)
+![](<../.gitbook/assets/image (210) (1).png>)
 
 **네트워크 매핑**
 
@@ -383,7 +383,7 @@ ANFW-VPC01-Private-Instance, ANFW-VPC02-Private-Instance를 각각 실행합니�
 
 * **`보안 그룹 : "ALBSecurityGroup"`** 를 선택합니다
 
-![](<../.gitbook/assets/image (218) (1).png>)
+![](<../.gitbook/assets/image (218) (1) (1).png>)
 
 리스너 및 라우팅
 
@@ -429,7 +429,7 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 10.2.22.102
 ```
 
-![](<../.gitbook/assets/image (217) (1).png>)
+![](<../.gitbook/assets/image (217) (1) (1).png>)
 
 대상 그룹 생성이 완료되면 Application Load Balancer 생성 메뉴창으로 다시 돌아갑니다
 
@@ -448,7 +448,7 @@ ALB 구성의 최종 구성 정보를 확인하고 , ALB를 생성합니다.&#x2
 
 **`AWS 관리콘솔 - EC2 - 로드밸런서`** 에서 ANFW-VPC01,VPC02 를 대상그룹으로 생성한 Target 인스턴스들이 "Healthy" 상태인지 확인합니다.
 
-![](<../.gitbook/assets/image (211).png>)
+![](<../.gitbook/assets/image (211) (1).png>)
 
 ### 12. ALB 트래픽 확인
 
@@ -472,9 +472,9 @@ Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었�
 
 * VPC - Amazon Network Firewall - 방화벽
 
-![](<../.gitbook/assets/image (221).png>)
+![](<../.gitbook/assets/image (221) (1).png>)
 
-![](<../.gitbook/assets/image (220) (1).png>)
+![](<../.gitbook/assets/image (220) (1) (1).png>)
 
 ### 14. Network Firewall 정책
 
@@ -482,7 +482,7 @@ Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었�
 
 먼저 Firewall 구성은 아래와 같은 방식으로 구성할 수 있습니다.
 
-![](<../.gitbook/assets/image (213).png>)
+![](<../.gitbook/assets/image (213) (1).png>)
 
 ### 15. Stateless Rule 적용
 
@@ -498,7 +498,7 @@ Stateless 정책을 생성하고 적용합니다
 
 * VPC - 방화벽 정책 - 생성된 정책 - Stateless Rule Group (상태 비저장 규칙 그룹 - (무상태 규칙 그룹 생성
 
-![](<../.gitbook/assets/image (218).png>)
+![](<../.gitbook/assets/image (218) (1).png>)
 
 * 이름 :  Stateless-Rule
 * 용량 : 100
@@ -554,7 +554,7 @@ ALBVPC01 은 접속이 허용되고, ALBVPC02는 접속되지 않습니다
 
 * VPC - Amazon Network Firewall - allpermit 규칙을 선택합니다
 
-![](<../.gitbook/assets/image (224).png>)
+![](<../.gitbook/assets/image (224) (1).png>)
 
 * 규칙편집을 선택합니다
 
@@ -562,7 +562,7 @@ ALBVPC01 은 접속이 허용되고, ALBVPC02는 접속되지 않습니다
 
 * 편집을 선택합니다
 
-![](<../.gitbook/assets/image (223).png>)
+![](<../.gitbook/assets/image (223) (1).png>)
 
 * 프로토콜 - IP
 * 소스 - ANY
@@ -578,7 +578,7 @@ ALBVPC01 은 접속이 허용되고, ALBVPC02는 접속되지 않습니다
 
 변경이 완료되면 아래와 같이 변경됩니다.&#x20;
 
-![](<../.gitbook/assets/image (220).png>)
+![](<../.gitbook/assets/image (220) (1).png>)
 
 ALB-VPC02 DNS 주소를 입력하고 Cloud9 터미널에서 Curl을 실행하거나,브라우저에서 아래 주소를 입력해 봅니다.
 
@@ -606,42 +606,97 @@ ALBVPC0**2** 은 접속이 허용되고, ALBVPC01는 접속되지 않습니다
 
 ![](<../.gitbook/assets/image (204).png>)
 
+### 17. Stateful Rule 적용
+
+Suricata는 IDS(탐지)/IPS(탐지,차단)가 가능한 Open source 도구 입니다. Snort와 완벽하게 호환이 가능하며, 멀티 쓰레드 지원과 GPU 지원등으로 성능 부분에서 높은 평가를 받고 있습니다. (2020년 부터 Snort 3.0 출시와 함께 멀티 쓰레지 지원)
+
+Amazon Network Firewall의 Stateful IPS는 Suricata IPS를 통해서, Deep Inspection구현이 가능합니다. 또한 상용도구와 연계도 가능합니다. ( Fortinet 지원- 상용)
+
+먼저 새로운 Stateful Rule Group 생성을 합니다.
+
+**`VPC-Firewall policies - 생성한 Policy - Stateful rule groups - Add rule groups - Create and add new stateful rule group`**
+
+Stateful rule group을 생성합니다.
+
+1. **Name : Stateful Rule 이름을 정의합니다.**
+2. **Capacity : Rule Group의 Rule의 숫자를 정의합니다.(최대 30,000개)**
+3. **Stateful rule group options : Suricata IPS Rule을 선택합니다.**
+4. **Suricata IPS Rule을 설정합니다.**
+
+![](<../.gitbook/assets/image (224).png>)
+
+![](<../.gitbook/assets/image (222).png>)
+
+IP Set 정의 (옵션) 를 합니다. IP 대역에 대한 변수 설정을 미리 해 둘 수 있습니다.&#x20;
+
+![](<../.gitbook/assets/image (220).png>)
+
+Suricata IPS Rule을 정의합니다
+
+![](<../.gitbook/assets/image (226).png>)
+
+IPS Rule은 아래와 같이 구성해 봅니다.
+
+```
+#AWS 키워드 메세지가 들어가는 접속은 Alert을 띄웁니다
+alert tcp any any -> any any (msg: "No access to the EC2-1 Webpage"; content: "AWS"; sid: 101; rev:1;)
+#ALB_VPC01 을 접속할때 Alert을 띄웁니다
+alert http any any -> $ALB_VPC01 any (msg: "User agent"; http.user_agent; content:"Firefox"; sid:102; rev:1;)
+#ALB_VPC02 를 Firefox로 접속하면 Drop 됩니다.
+drop http any any -> $ALB_VPC02 any (msg: "User agent"; http.user_agent; content:"Firefox"; sid:103; rev:1;)
+```
+
+&#x20;Web 브라우저에서 접속해 봅니다.
+
+![](<../.gitbook/assets/image (215).png>)
+
+### 18. Log확인
+
+Cloudformation으로 배포 할때 CloudWatch Log Group을 생성해서 Flow, Alert/Drop에 대해 로그를 확인 할 수 있도록 하였습니다
+
+CloudWatch에서 아래에서 처럼 Log를 확인해 봅니다.
+
+![](<../.gitbook/assets/image (225).png>)
+
+* CloudWatch - Logs - Log Groups - /ANFW-N2SVPC/N2S-fw/alert - LogStream 선택
+
+![](<../.gitbook/assets/image (218).png>)
+
+* CloudWatch - Logs - Log Groups - /ANFW-N2SVPC/N2S-fw/flow - LogStream 선택&#x20;
+
+![](<../.gitbook/assets/image (217).png>)
 
 
-****
-
-****
 
 ## 자원 삭제
 
+
+
 로드 밸런서를 삭제 합니다. (**ALB-VPC01-TG, ALB-VPC02-TG 만 삭제합니다.**)
 
-![](<../.gitbook/assets/image (202).png>)
+* EC2- LoadBalancing -Load Balancer
 
-**`AWS 관리 콘솔 - 로드밸런싱 - 로드밸런서 - ALB-VPC01-TG, ALB-VPC02-TG 선택 - 작업 - 삭제`**&#x20;
+![](<../.gitbook/assets/image (211).png>)
+
+**`AWS 관리 콘솔 - 로드밸런싱 - 로드밸런서 - ANFW-VPC01-TG, ANFW-VPC02-TG 선택 - 작업 - 삭제`**
 
 ALB와 대상 그룹을 삭제합니다. (**VPC01-TG,VPC02-TG 만 삭제 합니다.**)
 
-* **`EC2 - 로드밸런싱 - 대상 그룹 - VPC01-TG 선택 - 작업 선택 - 삭제`**
-* **`EC2 - 로드밸런싱 - 대상 그룹 - VPC02-TG 선택 - 작업 선택 - 삭제`**
+* **`EC2 - 로드밸런싱 - 대상 그룹 - ANFW-VPC01-TG 선택 - 작업 선택 - 삭제`**
+* **`EC2 - 로드밸런싱 - 대상 그룹 - ANFW-VPC02-TG 선택 - 작업 선택 - 삭제`**
 
-**`AWS 관리콘솔 - Cloudformation - 스택`** 을 선택하고 생성된 Stack을 삭제합니다.
+Cloud9 콘솔에서 아래 명령을 통해서 삭제 합니다.&#x20;
 
-GWLBTGW,VPC01,VPC02,N2SVPC,GWLBVPC 순으로 삭제합니다.(Cloud9은 계속 사용하기 위해 삭제 하지 않습니다.)
-
-1. GWLBTGW를 삭제합니다. (3\~4분 소요됩니다.)
-2. VPC01,VPC02를 삭제합니다. (3\~4분 소요됩니다. 동시 진행합니다.)
-3. N2SVPC를 삭제 합니다. (3\~4분 소요됩니다.)
-4. GWLBVPC를 삭제 합니다. (3\~4분 소요됩니다.)
+1. ANFWTGW를 삭제합니다. (3\~4분 소요됩니다.)
+2. ANFW-VPC01,VPC02를 삭제합니다. (3\~4분 소요됩니다. 동시 진행합니다.)
+3. ANFW-N2SVPC를 삭제 합니다. (3\~4분 소요됩니다.)
 
 ```
-aws cloudformation delete-stack --stack-name GWLBTGW
-aws cloudformation delete-stack --stack-name VPC01
-aws cloudformation delete-stack --stack-name VPC02
-aws cloudformation delete-stack --stack-name N2SVPC
-aws cloudformation delete-stack --stack-name GWLBVPC
-```
+aws cloudformation delete-stack --stack-name ANFWTGW --region ap-northeast-1
+aws cloudformation delete-stack --stack-name ANFW-VPC02 --region ap-northeast-1
+aws cloudformation delete-stack --stack-name ANFW-VPC01 --region ap-northeast-1
+aws cloudformation delete-stack --stack-name N2SVPC --region ap-northeast-1
 
-![](https://github.com/whchoi98/aws-gwlb/raw/master/.gitbook/assets/image%20\(85\).png)
+```
 
 랩을 완전히 종료하려면 **`AWS 관리콘솔 - Cloudformation - 스택`** aws cloud9 콘솔 스택도 삭제합니다.
