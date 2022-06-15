@@ -12,9 +12,9 @@ description: 'update : 2022-06-12'
 
 ### :ballot\_box\_with\_check:[GWLB Design](gwlb-gateway-load-balancer/gwlb-design.md#undefined)
 
-### :ballot\_box\_with\_check:[ANFW 소개](anfw-amazon-network-firewall/anfw-overview.md#overview)
+### :ballot\_box\_with\_check:[ANFW 소개](anfw-aws-network-firewall/anfw-overview.md#overview)
 
-### :ballot\_box\_with\_check:[ANFW Design](anfw-amazon-network-firewall/anfw-design.md#undefined)
+### :ballot\_box\_with\_check:[ANFW Design](anfw-aws-network-firewall/anfw-design.md#undefined)
 
 ### :ballot\_box\_with\_check:[GWLB & ANFW Super LAB](./#gwlb-and-anfw-super-lab)
 
