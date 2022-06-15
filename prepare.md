@@ -105,13 +105,13 @@ Cloud9 권한 부여
 * 역할 세부 정보에 역할 이름을 입력합니다. (예. Cloud9-Admin)
 * 하단의 역할 생성을 선택합니다.&#x20;
 
-![](<.gitbook/assets/image (213).png>)
+![](<.gitbook/assets/image (213) (1).png>)
 
 Cloud 9의 역할을 변경하기 위해서, IAM 역할을 수정합니다
 
 * AWS 서비스 - EC2 - 인스턴스 - Cloud9 선택 - 작업 - 보안 - IAM 역할 수정
 
-![](<.gitbook/assets/image (212).png>)
+![](<.gitbook/assets/image (212) (1).png>)
 
 * IAM의 역할을 위에서 만든 역할 이름으로 변경하고 업데이트 합니다.&#x20;
 
@@ -119,7 +119,7 @@ Cloud 9의 역할을 변경하기 위해서, IAM 역할을 수정합니다
 
 Cloud9 화면의 우측 상단 톱니바퀴를 선택하고, 아래에서 처럼 AWS Settings의 Credential 을 변경합니다.&#x20;
 
-![](<.gitbook/assets/image (222).png>)
+![](<.gitbook/assets/image (222) (1).png>)
 
 
 
@@ -175,20 +175,20 @@ chmod 400 ./mykey.pem
 
 ```
 #Tokoy Region 전송 
-aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://gwlbkey.pub --region ap-northeast-1
+aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://mykey.pub --region ap-northeast-1
 #Seoul Region 전송
-aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://gwlbkey.pub --region ap-northeast-2
+aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://mykey.pub --region ap-northeast-2
 #버지니아 리전 전송
-aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://gwlbkey.pub --region us-east-1
+aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://mykey.pub --region us-east-1
 #오레곤 리전 전송
-aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://gwlbkey.pub --region us-west-2
+aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://mykey.pub --region us-west-2
 
 ```
 
 아래와 같이 업로드가 완료됩니다.
 
 ```
- $ aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://gwlbkey.pub --region ap-northeast-2
+ $ aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://mykey.pub --region ap-northeast-2
 {
     "KeyFingerprint": "xx:xx:xx:xx:xx:65:3a:70:fb:b1:fa:dd:6c:59:c6:9e",
     "KeyName": "gwlbkey",
@@ -201,7 +201,7 @@ aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://gwlbkey
 
 **`AWS 관리 콘솔 - EC2 - 네트워크 및 보안 - 키페어`**
 
-![](<.gitbook/assets/image (16).png>)
+![](<.gitbook/assets/image (213).png>)
 
 ## Session Manager Plugin 설치
 

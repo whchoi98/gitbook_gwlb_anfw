@@ -191,7 +191,7 @@ TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC�
 
 **`AWS 관리콘솔 - VPC - 라우팅 테이블`** 을 선택하고, **`"N2SVPC-IGW-Ingress-RT"`**의 **`라우팅`**을 확인합니다.
 
-![](<../.gitbook/assets/image (212) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (212) (1) (1) (1) (1) (1).png>)
 
 ## Traffic 확인
 
@@ -199,7 +199,7 @@ TransitGateway 구성과 RouteTable을 아래에서 확인합니다. Egress(VPC�
 
 아래와 같은 트래픽 흐름으로 VPC 에서 외부로 트래픽을 처리하게 됩니다.
 
-![](<../.gitbook/assets/image (213) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (213) (1) (1) (1) (1).png>)
 
 1. ANFW-VPC01,02 Private Subnet Instance에서 TGW 로 트래픽 전송 (Private Subnet Routing Table 참조)
 2. TGW에서 ANFW-VPC01의 Attachment 로 연결된 라우팅 테이블을 참조
@@ -292,7 +292,7 @@ AWS의 Resource Group 구성과 System Manager RunBook을 통해서 , Shell을 �
 
 아래와 같이 퀴리 기반 그룹을 생성합니다.
 
-![](<../.gitbook/assets/image (213) (1) (1).png>)
+![](<../.gitbook/assets/image (213) (1) (1) (1).png>)
 
 ![](<../.gitbook/assets/image (209) (1) (1).png>)
 
@@ -348,13 +348,13 @@ exit;
 
 대상에서 리소스그룹을 선택하고, 리소스 그룹은 앞서 생성한 "ANFW-VPC01-Private-Instance", "ANFW-VPC02-Private-Instance"를 선택합니다.
 
-![](<../.gitbook/assets/image (212) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (212) (1) (1) (1) (1).png>)
 
 ANFW-VPC01-Private-Instance, ANFW-VPC02-Private-Instance를 각각 실행합니다.
 
 모두 실행하고 나면, 아래와 같이 명령기록에 Shell이 8개 인스턴스에 모두 실행된 것을 확인할 수 있습니다.
 
-![](<../.gitbook/assets/image (222) (1).png>)
+![](<../.gitbook/assets/image (222) (1) (1).png>)
 
 ### 11. ALB 구성
 
@@ -482,7 +482,7 @@ Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었�
 
 먼저 Firewall 구성은 아래와 같은 방식으로 구성할 수 있습니다.
 
-![](<../.gitbook/assets/image (213) (1).png>)
+![](<../.gitbook/assets/image (213) (1) (1).png>)
 
 ### 15. Stateless Rule 적용
 
@@ -492,7 +492,7 @@ Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었�
 
 * VPC - 네트워크 및 보안 - 네트워크 인터페이스 - ALB-VPC02 -프라이빗 IPv4 확인
 
-![](<../.gitbook/assets/image (212) (1) (1).png>)
+![](<../.gitbook/assets/image (212) (1) (1) (1).png>)
 
 Stateless 정책을 생성하고 적용합니다
 
