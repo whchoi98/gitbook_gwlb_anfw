@@ -714,7 +714,7 @@ VPC01-Private-Instance, VPC02-Private-Instance를 각각 실행합니다.
 * **`체계 : "인터넷 경계"`** 를 선택합니다.
 * **`IP 주소유형 - "IPv4"`** 를 선택합니다.
 
-![](<../.gitbook/assets/image (208) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (208) (1) (1) (1) (1).png>)
 
 **네트워크 매핑**&#x20;
 

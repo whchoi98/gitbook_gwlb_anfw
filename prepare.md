@@ -82,6 +82,47 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ```
 
+
+
+Cloud9 권한 부여
+
+이 랩에서는 ap-northeast-2에서 생성한 Cloud9이 다른 리전의 자원을 제어하도록 구성되어 있습니다. 권한을 부여해서 사용합니다.&#x20;
+
+먼저 아래와 같이 IAM에서 역할을 선택합니다.&#x20;
+
+* IAM - 역할 - 역할 만들기
+
+![](<.gitbook/assets/image (217).png>)
+
+* AWS 서비스 - EC2 선택
+
+![](<.gitbook/assets/image (228).png>)
+
+* 권한 추가 - AdministratorAccess 선택
+
+![](<.gitbook/assets/image (223).png>)
+
+* 역할 세부 정보에 역할 이름을 입력합니다. (예. Cloud9-Admin)
+* 하단의 역할 생성을 선택합니다.&#x20;
+
+![](<.gitbook/assets/image (213).png>)
+
+Cloud 9의 역할을 변경하기 위해서, IAM 역할을 수정합니다
+
+* AWS 서비스 - EC2 - 인스턴스 - Cloud9 선택 - 작업 - 보안 - IAM 역할 수정
+
+![](<.gitbook/assets/image (212).png>)
+
+* IAM의 역할을 위에서 만든 역할 이름으로 변경하고 업데이트 합니다.&#x20;
+
+![](<.gitbook/assets/image (208).png>)
+
+Cloud9 화면의 우측 상단 톱니바퀴를 선택하고, 아래에서 처럼 AWS Settings의 Credential 을 변경합니다.&#x20;
+
+![](<.gitbook/assets/image (222).png>)
+
+
+
 ## keypair 만들기
 
 keypair를 Cloud9에서 생성합니다.
@@ -180,4 +221,6 @@ git clone https://github.com/whchoi98/useful-shell.git
 ```
 
 **이제 사전 구성이 완료되었습니다.**
+
+
 
