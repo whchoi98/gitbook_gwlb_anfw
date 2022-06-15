@@ -1,2 +1,0 @@
-# ANFW (AWS Network Firewall)
-
