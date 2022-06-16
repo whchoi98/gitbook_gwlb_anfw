@@ -182,7 +182,7 @@ N2SVPC, VPC01,02,03 을 연결할 TGW를 생성합니다. N2STGW는 TGW Routing 
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "GWLBTGW" \
-  --template-file "/home/ec2-user/environment/gwlb/Case4/5.Case4-GWLBTGW.yml" 
+  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/5.GWLBTGW.yml" 
   
 ```
 
