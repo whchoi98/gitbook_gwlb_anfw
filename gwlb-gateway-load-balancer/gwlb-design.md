@@ -106,7 +106,7 @@ N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. �
 * VPC2CIDRBlock: 10.2.0.0/16 (VPC2의 CIDR Block 주소를 선언합니다.)
 * VPCEndpointServiceName : 앞서 복사해둔 GWLBVPC의 VPC endpoint service name을 입력합니다.
 * InstanceTyep: t3.small
-* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. gwlbkey)
+* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예.mykey)
 
 ```
 aws cloudformation deploy \
@@ -140,7 +140,7 @@ VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC�
 * TGWSubnetABlock:10.1.251.0/24 (VPC01), 10.2.251.0/24 (VPC02)
 * TGWSubnetBBlock:10.1.252.0/24 (VPC01), 10.2.252.0/24 (VPC02)
 * InstanceTyep: t3.small
-* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. gwlbkey)
+* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. mykey)
 
 ```
 aws cloudformation deploy \
@@ -809,13 +809,13 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 이제 다시 Cloud9 콘솔에서 앞서 실행 해 둔 Applicance 터미널에서 아래를 실행합니다.
 
 ```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance1
+ssh -i ~/environment/mykey.pem ec2-user@$Appliance1
 sudo tcpdump -nvv 'port 6081' | grep '10.11.11.99'
 
 ```
 
 ```
-ssh -i ~/environment/gwlbkey.pem ec2-user@$Appliance2
+ssh -i ~/environment/mykey.pem ec2-user@$Appliance2
 sudo tcpdump -nvv 'port 6081' | grep '10.11.11.99'
 
 ```
