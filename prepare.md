@@ -167,7 +167,7 @@ The key's randomart image is:
 Cloud9 Terminal 에서 생성되는 Public EC2들에 대한 접근을 할 수 있도록 아래와 같이 구성합니다.
 
 ```
-mv ~/environment/mkey ~/environment/mykey.pem
+mv ~/environment/mykey ~/environment/mykey.pem
 chmod 400 ./mykey.pem
 ```
 
@@ -203,7 +203,7 @@ aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://mykey.p
 
 ![](<.gitbook/assets/image (213).png>)
 
-## Session Manager Plugin 설치
+## Session Manager Plugin 설치 및 기타 유틸리티 설치
 
 Session Manager는 AWS Systems Manager의 일부 기능입니다. Session Manager에서, EC2 인스턴스, 엣지 디바이스, 온프레미스 서버 및 가상 머신(VM)을 관리할 수 있습니다. 브라우저 기반 셸 또는 AWS Command Line Interface(AWS CLI)을 사용할 수 있습니다. Session Manager는 인바운드 포트를 열고, 배스천 호스트를 유지하고, SSH 키를 관리할 필요 없이 보안성과 감사 가능성을 갖춘 노드 관리 기능을 제공합니다.&#x20;
 
@@ -218,6 +218,7 @@ curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64b
 sudo yum install -y session-manager-plugin.rpm
 git clone https://github.com/whchoi98/useful-shell.git
 
+sudo yum -y install jq gettext bash-completion moreutils
 ```
 
 **이제 사전 구성이 완료되었습니다.**

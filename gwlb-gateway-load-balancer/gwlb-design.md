@@ -53,6 +53,9 @@ Cloud9 터미널에서 AWS CLI의 Cloudformation 명령을 통해 GWLBVPC를 배
 * KeyPair : 사전에 만들어 둔 keyPair를 사용합니다. (예. mykey)
 
 ```
+export KeyName=mykey
+echo "export KeyName=${KeyName}" | tee -a ~/.bash_profile
+source ~/.bash_profile
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "GWLBVPC" \
@@ -79,7 +82,10 @@ aws cloudformation deploy \
 VPCEndpointServiceName 값을 아래에서 처럼 환경변수에 저장해 둡니다. &#x20;
 
 ```
-export VPCEndpointServiceName=com.amazonaws.vpce.ap-northeast-2.vpce-svc-05ab1bb335b43d371
+export VPCEndpointServiceName=$(aws ec2 describe-vpc-endpoint-services --filter "Name=service-type,Values=GatewayLoadBalancer" | jq -r '.ServiceNames[]')
+echo $VPCEndpointServiceName
+echo "export VPCEndpointServiceName=${VPCEndpointServiceName}" | tee -a ~/.bash_profile
+source ~/.bash_profile
 
 ```
 
@@ -109,6 +115,7 @@ N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. �
 * KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예.mykey)
 
 ```
+source ~/.bash_profile
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "N2SVPC" \
@@ -143,6 +150,7 @@ VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC�
 * KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. mykey)
 
 ```
+source ~/.bash_profile
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "VPC01" \
