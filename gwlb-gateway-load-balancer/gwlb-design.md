@@ -166,6 +166,7 @@ aws cloudformation deploy \
 ```
 
 ```
+source ~/.bash_profile
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "VPC02" \
@@ -187,6 +188,7 @@ N2SVPC, VPC01,02,03 을 연결할 TGW를 생성합니다. N2STGW는 TGW Routing 
 * VPC02CIDRBlock: 10.2.0.0/16
 
 ```
+source ~/.bash_profile
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "GWLBTGW" \
@@ -328,39 +330,27 @@ Appliance 구성 정보를 확인해 봅니다.
 앞서 사전 준비에서 생성한 Cloud9 터미널에서 Appliance로 직접 접속해 봅니다.
 
 ```
-export Appliance1={Appliance1ip address}
-export Appliance2={Appliance2ip address}
-export Appliance3={Appliance3ip address}
-export Appliance4={Appliance4ip address}
-```
-
-아래와 같이 구성합니다.
-
-```
-#bash profile에 등록
-echo "export Appliance1=$Appliance1" | tee -a ~/.bash_profile
-echo "export Appliance2=$Appliance2" | tee -a ~/.bash_profile
-echo "export Appliance3=$Appliance3" | tee -a ~/.bash_profile
-echo "export Appliance4=$Appliance4" | tee -a ~/.bash_profile
-source ~/.bash_profile
+#ec2 id 에 대한 환경변수 설정
+~/environment/gwlb_anfw/gwlb/gwlb_ec2_shell.sh
 
 ```
 
 Cloud9에서 새로운 터미널 4개를 탭에서 추가해서 4개 Appliance를 모두 확인해 봅니다.
 
-```
-ssh -i ~/environment/mykey.pem ec2-user@$Appliance1
-ssh -i ~/environment/mykey.pem ec2-user@$Appliance2
-ssh -i ~/environment/mykey.pem ec2-user@$Appliance3
-ssh -i ~/environment/mykey.pem ec2-user@$Appliance4
+<pre><code><strong>aws ssm start-session --target $Appliance_11_101
+</strong>aws ssm start-session --target $Appliance_11_102
+aws ssm start-session --target $Appliance_12_101
+aws ssm start-session --target $Appliance_12_102
 
-```
+</code></pre>
 
 각 Appliance에서 아래 명령을 통해 , GWLB IP와 어떻게 매핑되었는지 확인합니다.
 
 ```
-ssh -i ~/environment/mykey.pem ec2-user@$Appliance1
+aws ssm start-session --target $Appliance_11_101
+sudo -s
 sudo iptables -L -n -v -t nat
+
 ```
 
 AZ A에 배포된 Appliance는 다음과 같이 출력됩니다.
@@ -387,7 +377,8 @@ Chain POSTROUTING (policy ACCEPT 20849 packets, 1611K bytes)
 AZ B에 배포된 Appliance는 다음과 같이 출력됩니다.
 
 ```
-ssh -i ~/environment/mykey.pem ec2-user@$Appliance3
+aws ssm start-session --target $Appliance_12_101
+sudo -s
 sudo iptables -L -n -v -t nat
 
 ```
@@ -538,10 +529,13 @@ cd ~/environment/useful-shell/
 +-------------------------------------------------------+------------------+----------------------+------------+------------------------+-------------+----------------+-----------------+
 ```
 
+
+
 session manager 명령을 통해 해당 인스턴스에 연결해 봅니다. (예. VPC01-Private-A-10.1.21.101)
 
 ```
-aws ssm start-session --target {VPC01-Private-A-10.1.21.101 Instance ID}
+#VPC01 10.1.21.101 접속 
+aws ssm start-session --target $VPC01_21_101
 
 ```
 
