@@ -804,20 +804,20 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 
 아래에서 ALB의 내부 IP 주소를 확인해 봅니다.
 
-**`AWS 관리콘솔 - EC2- 네트워크 및 보안 - 네트워크 인터페이스 - ALB-VPC01-TG`** 확인.
+**`AWS 관리콘솔 - EC2- 네트워크 및 보안 - 네트워크 인터페이스 - ELB app/ALB-VPC01`** 확인.
 
 ![](<../.gitbook/assets/image (200).png>)
 
 이제 다시 Cloud9 콘솔에서 앞서 실행 해 둔 Applicance 터미널에서 아래를 실행합니다.
 
 ```
-ssh -i ~/environment/mykey.pem ec2-user@$Appliance1
+aws ssm start-session --target $Appliance_11_101
 sudo tcpdump -nvv 'port 6081' | grep '10.11.11.99'
 
 ```
 
 ```
-ssh -i ~/environment/mykey.pem ec2-user@$Appliance2
+aws ssm start-session --target $Appliance_11_102
 sudo tcpdump -nvv 'port 6081' | grep '10.11.11.99'
 
 ```
@@ -825,7 +825,10 @@ sudo tcpdump -nvv 'port 6081' | grep '10.11.11.99'
 여러분의 웹 브라우저에서 앞서 복사해둔 ALB DNS A Record와 나머지 URL을 입력합니다.
 
 ```
-http://{ALB-DNS-A-Record}/ec2meta-webpage/index.php
+aws elbv2 describe-load-balancers --names ALB-VPC01 | jq -r '.LoadBalancers[].DNSName'
+export ALB_VPC01_URL=$(aws elbv2 describe-load-balancers --names ALB-VPC01 | jq -r '.LoadBalancers[].DNSName') 
+echo "export ALB_VPC01_URL=${ALB_VPC01_URL}"| tee -a ~/.bash_profile
+curl $ALB_VPC01_URL
 ```
 
 ![](<../.gitbook/assets/image (201).png>)
