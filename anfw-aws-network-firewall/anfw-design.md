@@ -470,10 +470,17 @@ ALB 구성의 최종 구성 정보를 확인하고 , ALB를 생성합니다.&#x2
 
 ### 12. ALB 트래픽 확인
 
-여러분의 웹 브라우저에서 앞서 복사해둔 ALB DNS A Record와 나머지 URL을 입력합니다.
+웹 브라우저에서 앞서 복사해둔 ALB DNS A Record와 나머지 URL을 입력합니다.
 
 ```
-http://{ALB-DNS-A-Record}/ec2meta-webpage/index.php
+aws elbv2 describe-load-balancers --names ALB-VPC01 --region ap-northeast-1| jq -r '.LoadBalancers[].DNSName'
+export ANFW_ALB_VPC01_URL=$(aws elbv2 describe-load-balancers --names ALB-VPC01 --region ap-northeast-1 | jq -r '.LoadBalancers[].DNSName') 
+echo "export ANFW_ALB_VPC01_URL=${ANFW_ALB_VPC01_URL}"| tee -a ~/.bash_profile
+curl $ANFW_ALB_VPC01_URL
+```
+
+```
+echo URL= http://${ANFW_ALB_VPC01_URL}/ec2meta-webpage/index.php
 ```
 
 ![](<../.gitbook/assets/image (201).png>)
@@ -506,15 +513,22 @@ Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었�
 
 앞서 생성한 ALB-VPC01, ALB-VPC02 웹서비스 중에 1개의 ALB를 Block 해 봅니다
 
-먼저 ALB의 실제 내부 주소를 확인합니다
+먼저 ALB의 실제 내부 주소를 확인합니다.
 
-* VPC - 네트워크 및 보안 - 네트워크 인터페이스 - ALB-VPC02 -프라이빗 IPv4 확인
+* EC2 - 네트워크 및 보안 - 네트워크 인터페이스 - ALB-VPC02 -프라이빗 IPv4 확인
+* 검색 키워드
+
+```
+ALB-VPC02
+```
 
 ![](<../.gitbook/assets/image (212) (1) (1) (1).png>)
 
 Stateless 정책을 생성하고 적용합니다
 
-* VPC - 방화벽 정책 - 생성된 정책 - Stateless Rule Group (상태 비저장 규칙 그룹 - (무상태 규칙 그룹 생성
+* VPC - 방화벽 - N2S-firewall-ANFW-N2SVPC - 상태 비저장 규칙 그룹 - 작업 - 무상태 규칙 그룹 생성
+
+<figure><img src="../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
 
 ![](<../.gitbook/assets/image (218) (1).png>)
 
@@ -574,13 +588,13 @@ ALBVPC01 은 접속이 허용되고, ALBVPC02는 접속되지 않습니다
 
 ![](<../.gitbook/assets/image (224) (1).png>)
 
-* 규칙편집을 선택합니다
+* 규칙편집을 선택합니다.
 
 ![](<../.gitbook/assets/image (207).png>)
 
-* 편집을 선택합니다
+* 규칙 추가를 선택합니다
 
-![](<../.gitbook/assets/image (223) (1).png>)
+<figure><img src="../.gitbook/assets/image (68).png" alt=""><figcaption></figcaption></figure>
 
 * 프로토콜 - IP
 * 소스 - ANY
@@ -590,7 +604,11 @@ ALBVPC01 은 접속이 허용되고, ALBVPC02는 접속되지 않습니다
 
 ![](<../.gitbook/assets/image (219) (1).png>)
 
-* 기존 IP Allpermit Rule은 작업 - 삭제로 변경합니다
+기존 IP Allpermit Rule의 허용 규칙을 Drop(삭제)로 변경합니다.
+
+* 기존 IP Allpermit Rule은 작업 - 삭제로 변경합니다.
+
+<figure><img src="../.gitbook/assets/image (22).png" alt=""><figcaption></figcaption></figure>
 
 ![](<../.gitbook/assets/image (214) (1).png>)
 
@@ -624,7 +642,7 @@ ALBVPC0**2** 은 접속이 허용되고, ALBVPC01는 접속되지 않습니다
 
 ![](<../.gitbook/assets/image (204).png>)
 
-### 17. Stateful Rule 적용
+### 17. Stateful Rule - Suricata 적용
 
 Suricata는 IDS(탐지)/IPS(탐지,차단)가 가능한 Open source 도구 입니다. Snort와 완벽하게 호환이 가능하며, 멀티 쓰레드 지원과 GPU 지원등으로 성능 부분에서 높은 평가를 받고 있습니다. (2020년 부터 Snort 3.0 출시와 함께 멀티 쓰레지 지원)
 
@@ -664,7 +682,22 @@ alert http any any -> $ALB_VPC01 any (msg: "User agent"; http.user_agent; conten
 drop http any any -> $ALB_VPC02 any (msg: "User agent"; http.user_agent; content:"Firefox"; sid:103; rev:1;)
 ```
 
-&#x20;Web 브라우저에서 접속해 봅니다.
+"생성하여 정책에 추가" 버튼을 선택합니다.
+
+&#x20;
+
+Web 브라우저에서 접속해 봅니다.
+
+```
+#ALB-VPC01
+export ALBVPC01URL=$(aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,Scheme,DNSName,VpcId]" --output text --region ap-northeast-1 | awk '/ALB-VPC01-/ {print $3}')
+echo $ALBVPC01URL/ec2meta-webpage/index.php
+
+#ALB-VPC02
+export ALBVPC02URL=$(aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,Scheme,DNSName,VpcId]" --output text --region ap-northeast-1 | awk '/ALB-VPC02-/ {print $3}')
+echo ${ALBVPC02URL}/ec2meta-webpage/index.php
+
+```
 
 ![](<../.gitbook/assets/image (215).png>)
 
