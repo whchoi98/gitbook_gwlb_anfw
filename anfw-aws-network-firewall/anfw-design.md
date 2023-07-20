@@ -58,6 +58,9 @@ N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. �
 * KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. mykey, 사전 준비에서 변수로 입력해 두었습니다)
 
 ```
+export KeyName=mykey
+echo "export KeyName=${KeyName}" | tee -a ~/.bash_profile
+source ~/.bash_profile
 aws cloudformation deploy \
   --region ap-northeast-1 \
   --stack-name "ANFW-N2SVPC" \
@@ -124,14 +127,6 @@ ANFW-N2SVPC, ANFW-VPC01,02 을 연결할 TGW를 생성합니다. ANFW-N2STGW는 
 * DefaultRouteBlock: 0.0.0.0/0
 * VPC01CIDRBlock: 10.1.0.0/16
 * VPC02CIDRBlock: 10.2.0.0/16
-
-```
-aws cloudformation deploy \
-  --region ap-northeast-2 \
-  --stack-name "GWLBTGW" \
-  --template-file "/home/ec2-user/environment/gwlb/Case4/5.Case4-GWLBTGW.yml" 
-  
-```
 
 아래와 같이 VPC가 모두 정상적으로 설정되었는지 확인해 봅니다.
 
@@ -247,10 +242,17 @@ $ aws ec2 describe-instances --query 'Reservations[].Instances[].[Tags[?Key==`Na
 +------------------------------------+------------------+----------------------+-----------+------------------------+----------+----------------+------------------+
 ```
 
+배포된 인스턴스 정보들에 대해 변수로 저장해 두기 위해, 아래 Shell을 실행시킵니다.
+
+```
+~/environment/gwlb_anfw/anfw/anfw_ec2_shell.sh
+
+```
+
 session manager 명령을 통해 해당 인스턴스에 연결해 봅니다. (예. ANFW-VPC01-Private-A-10.1.21.101)
 
 ```
-aws ssm start-session --target {ANFW-VPC01-Private-A-10.1.21.101 id} --region ap-northeast-1
+aws ssm start-session --target $ANFW_VPC01_21_101 --region ap-northeast-1
 
 ```
 
@@ -407,13 +409,31 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 
 ![](<../.gitbook/assets/image (207) (1).png>)
 
-**대상등록**
+<figure><img src="../.gitbook/assets/image (20).png" alt=""><figcaption></figcaption></figure>
+
+* 대상유형 선택 - IP 주소 (다른 VPC의 인스턴스로 타겟그룹을 지정하기 위해서는 IP주소만 가능합니다)
+* 대상그룹 이름 - "**`VPC01-TG`**"**`, "VPC02-TG"`**
+* 프로토콜 - HTTP / 80
+* VPC - ANFW-N2SVPC 선택
+* 프로토콜 버전 - HTTP1
+* 상태검사 프로토콜 - HTTP
+* 상태검사 경로 - 아래를 복사해서 입력합니다.&#x20;
+
+```
+/ec2meta-webpage/index.php
+```
+
+
+
+**대상등록**&#x20;
 
 대상 등록에서는 ANFW-N2SVPC 가 아닌, ANFW-VPC01,02의 인스턴스IP가 Target이 되어야 합니다.
 
 * 네트워크 : **`다른 프라이빗 IP 주소`** 를 선택합니다.
 * IP : ANFW-VPC01,02 의 IP 주소를 입력합니다.
 * 목록에 추가를 선택하여 ANFW-VPC01,VPC02의 대상등록을 완료합니다.
+
+<figure><img src="../.gitbook/assets/image (232).png" alt=""><figcaption></figcaption></figure>
 
 ```
 #ANFW-VPC01 IP address
@@ -428,8 +448,6 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 10.2.22.101
 10.2.22.102
 ```
-
-![](<../.gitbook/assets/image (217) (1) (1).png>)
 
 대상 그룹 생성이 완료되면 Application Load Balancer 생성 메뉴창으로 다시 돌아갑니다
 
