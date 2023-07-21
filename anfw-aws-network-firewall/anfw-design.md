@@ -684,9 +684,19 @@ drop http any any -> $ALB_VPC02 any (msg: "User agent"; http.user_agent; content
 
 "생성하여 정책에 추가" 버튼을 선택합니다.
 
-&#x20;
+아래 내용을 참고해서 시험하기 전에 수행합니다.
 
-Web 브라우저에서 접속해 봅니다.
+{% hint style="info" %}
+기존에 IP 전체에 대한 Permit 이 적용되어 있기 때문에, suricata rule이 적용되지 않고, Pass 됩니다. 해당 정책의 연결을 해제해야 Suricata 정책이 적용됩니다. 이것을 Strict Mode라고 하며, 기본 동작방식입니다.&#x20;
+{% endhint %}
+
+**`VPC - 방화벽 정책 - 생성되어 있는 정책 선택`**
+
+**`"allpermit-ANFW-N2SVPC"` 상태 저장 규칙 그룹**을 **`정책에서 연결 해제`**합니다.
+
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+
+이제 Web 브라우저에서 접속해 봅니다.
 
 ```
 #ALB-VPC01
