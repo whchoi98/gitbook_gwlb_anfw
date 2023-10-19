@@ -40,8 +40,8 @@ git clone https://github.com/whchoi98/gwlb_anfw.git
 N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. 다운로드 받은 Yaml 파일들 중에 N2SVPC 선택해서 생성합니다.스택 이름을 생성하고, Tokyo Region에 배포합니다.&#x20;
 
 * 스택이름 : ANFW-N2SVPC
-* AvailabilityZone A : ap-northeast-1a
-* AvailabilityZone B : ap-northeast-1b
+* AvailabilityZone A : ap-northeast-2a
+* AvailabilityZone B : ap-northeast-2b
 * VPCCIDRBlock: 10.11.0.0
 * GWLBeSubnetABlock:10.11.1.0/24
 * GWLBeSubnetBBlock:10.11.2.0/24
@@ -67,8 +67,8 @@ aws cloudformation deploy \
   --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/1.ANFW-N2SVPC.yml" \
   --parameter-overrides \
     "KeyPair=$KeyName" \
-    "AvailabilityZoneA=ap-northeast-1a" \
-    "AvailabilityZoneB=ap-northeast-1c" \
+    "AvailabilityZoneA=ap-northeast-2a" \
+    "AvailabilityZoneB=ap-northeast-2b" \
     "InstanceType=t3.small" \
   --capabilities CAPABILITY_NAMED_IAM
   
