@@ -1,30 +1,35 @@
 ---
-description: 'update : 2022-06-12'
+description: 'Update : 2020-12-20'
 ---
 
-# GWLB/ANFW Workshop
+# AWS Network Firewall Workshop
 
-## 목차&#x20;
+## 소개&#x20;
 
-### :ballot\_box\_with\_check:[사전 준비 ](prepare.md#undefined)
+AWS Network Firewall은 Amazon Virtual Private Cloud (Amazon VPC)에서 생성 한 가상 사설 클라우드 (VPC)를위한 Stateless,Stateful 기반 관리 형 네트워크 방화벽 및 IDS/IPS 서비스입니다.
 
-### :ballot\_box\_with\_check:[GWLB 소개](gwlb-gateway-load-balancer/gwlb-overview.md#overview)
+![](<.gitbook/assets/image (89).png>)
 
-### :ballot\_box\_with\_check:[GWLB Design](gwlb-gateway-load-balancer/gwlb-design.md#undefined)
+네트워크 방화벽을 사용하면 VPC 내부 트래픽을 필터링 할 수 있습니다. 터넷 게이트웨이, NAT 게이트웨이 또는 VPN 또는 AWS Direct Connect를 통해 들어오고 나가는 트래픽 필터링이 포함됩니다. 네트워크 방화벽은 Stateful 기반 보안 위해 오픈 소스 IPS (침입 방지 시스템) 인 Suricata를 사용합니다. 네트워크 방화벽은 Suricata 호환 규칙을 지원합니다.
 
-### :ballot\_box\_with\_check:[ANFW 소개](anfw-aws-network-firewall/anfw-overview.md#overview)
+네트워크 방화벽을 사용하여 다음과 같은 다양한 방법으로 Amazon VPC 트래픽을 모니터링하고 보호 할 수 있습니다.
 
-### :ballot\_box\_with\_check:[ANFW Design](anfw-aws-network-firewall/anfw-design.md#undefined)
+* 허용하 AWS 서비스 도메인 또는 Amazon S3와 같은 IP 주소 엔드 포인트에서만 트래픽을 전달합니다.
+* 차단이 필요 도메인의 사용자 지정 목록을 사용하여 애플리케이션이 액세스 할 수있는 도메인 제한합니다.
+* VPC에 들어 오거나 나가는 트래픽에 대해 패킷 검사를 수행합니다.
+* Stateful 프로토콜 감지를 사용하여 사용되는 포트에 관계없이 HTTPS와 같은 프로토콜을 필터링합니다.
 
-### :ballot\_box\_with\_check:[GWLB & ANFW Super LAB](./#gwlb-and-anfw-super-lab)
+VPC에 대해 네트워크 방화벽을 활성화하려면 Amazon VPC와 네트워크 방화벽 모두에서 단계를 수행합니다.
 
-#### written by Woohyung Choi (whchoi98@gmail.com) / (whchoi@amazon.com)
+이 워크샵에서는 다양한 디자인과 함께 Network Filrewall을 적용하는 방안들을 살펴 봅니다.&#x20;
 
-#### :notebook\_with\_decorative\_cover: [Lab Markdown code](https://github.com/whchoi98/gitbook\_gwlb\_anfw)
+## [**Network Firewall 기본 구성**](single-az-nwfw.md)
 
-#### &#x20;:notebook\_with\_decorative\_cover: [Lab - Cloudformation code (yaml files)](https://github.com/whchoi98/gwlb\_anfw)
+## [**Network Firewall - MultiVPC 구성**](multi-vpc-nwfw.md)
+
+## [**Network Firewall - Multi AZ** 구성](multi-az-nwfw.md)
 
 
 
-
+Written by WOO HYUNG CHOI (whchoi98@gmail.com, whchoi@amazon.com)
 
