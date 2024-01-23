@@ -61,14 +61,15 @@ N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. �
 export KeyName=mykey
 echo "export KeyName=${KeyName}" | tee -a ~/.bash_profile
 source ~/.bash_profile
+export AWS_REGION=ap-northeast-1
 aws cloudformation deploy \
   --region ap-northeast-1 \
   --stack-name "ANFW-N2SVPC" \
   --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/1.ANFW-N2SVPC.yml" \
   --parameter-overrides \
     "KeyPair=$KeyName" \
-    "AvailabilityZoneA=ap-northeast-2a" \
-    "AvailabilityZoneB=ap-northeast-2b" \
+    "AvailabilityZoneA=ap-northeast-1a" \
+    "AvailabilityZoneB=ap-northeast-1c" \
     "InstanceType=t3.small" \
   --capabilities CAPABILITY_NAMED_IAM
   
@@ -94,8 +95,9 @@ VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC�
 * KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. mykey, 사전 준비에서 변수로 입력해 두었습니다)
 
 ```
+export AWS_REGION=ap-northeast-1
 aws cloudformation deploy \
-  --region ap-northeast-1 \
+  --region ${AWS_REGION}  \
   --stack-name "ANFW-VPC01" \
   --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/2.ANFW-VPC01.yml" \
   --parameter-overrides \
@@ -108,8 +110,9 @@ aws cloudformation deploy \
 ```
 
 ```
+export AWS_REGION=ap-northeast-1
 aws cloudformation deploy \
-  --region ap-northeast-1 \
+  --region ${AWS_REGION} \
   --stack-name "ANFW-VPC02" \
   --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/3.ANFW-VPC02.yml" \
   --parameter-overrides \
