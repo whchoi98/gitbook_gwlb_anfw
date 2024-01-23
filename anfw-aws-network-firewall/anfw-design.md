@@ -61,15 +61,15 @@ N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. �
 export KeyName=mykey
 echo "export KeyName=${KeyName}" | tee -a ~/.bash_profile
 source ~/.bash_profile
-export AWS_REGION=ap-northeast-1
+export AWS_REGION=ap-northeast-2
 aws cloudformation deploy \
-  --region ap-northeast-1 \
+  --region ${AWS_REGION} \
   --stack-name "ANFW-N2SVPC" \
   --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/1.ANFW-N2SVPC.yml" \
   --parameter-overrides \
     "KeyPair=$KeyName" \
-    "AvailabilityZoneA=ap-northeast-1a" \
-    "AvailabilityZoneB=ap-northeast-1c" \
+    "AvailabilityZoneA=ap-northeast-2a" \
+    "AvailabilityZoneB=ap-northeast-2b" \
     "InstanceType=t3.small" \
   --capabilities CAPABILITY_NAMED_IAM
   
@@ -95,30 +95,30 @@ VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC�
 * KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. mykey, 사전 준비에서 변수로 입력해 두었습니다)
 
 ```
-export AWS_REGION=ap-northeast-1
+export AWS_REGION=ap-northeast-2
 aws cloudformation deploy \
   --region ${AWS_REGION}  \
   --stack-name "ANFW-VPC01" \
   --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/2.ANFW-VPC01.yml" \
   --parameter-overrides \
     "KeyPair=$KeyName" \
-    "AvailabilityZoneA=ap-northeast-1a" \
-    "AvailabilityZoneB=ap-northeast-1c" \
+    "AvailabilityZoneA=ap-northeast-2a" \
+    "AvailabilityZoneB=ap-northeast-2b" \
     "InstanceType=t3.small" \
   --capabilities CAPABILITY_NAMED_IAM
   
 ```
 
 ```
-export AWS_REGION=ap-northeast-1
+export AWS_REGION=ap-northeast-2
 aws cloudformation deploy \
   --region ${AWS_REGION} \
   --stack-name "ANFW-VPC02" \
   --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/3.ANFW-VPC02.yml" \
   --parameter-overrides \
     "KeyPair=$KeyName" \
-    "AvailabilityZoneA=ap-northeast-1a" \
-    "AvailabilityZoneB=ap-northeast-1c" \
+    "AvailabilityZoneA=ap-northeast-2a" \
+    "AvailabilityZoneB=ap-northeast-2b" \
     "InstanceType=t3.small" \
   --capabilities CAPABILITY_NAMED_IAM
   
@@ -147,7 +147,7 @@ ANFW-N2SVPC, ANFW-VPC01,ANFW-VPC02을 연결하기 위한 TransitGateway를 배�
 
 ```
 aws cloudformation deploy \
-  --region ap-northeast-1 \
+  --region ${AWS_REGION} \
   --stack-name "ANFWTGW" \
   --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/4.ANFW-TGW.yml"
   
@@ -220,7 +220,7 @@ ANFW-VPC01,02 을 Cloudformation을 통해 배포할 때 해당 인스턴스들�
 session manager 기반으로 접속하기 위해, 아래 명령을 실행하여 ec2 인스턴스의 id값을 확인합니다.
 
 ```
-aws ec2 describe-instances --query 'Reservations[].Instances[].[Tags[?Key==`Name`] | [0].Value, Placement.AvailabilityZone,InstanceId, InstanceType, ImageId,State.Name, PrivateIpAddress, PublicIpAddress ]' --output table --region ap-northeast-1
+aws ec2 describe-instances --query 'Reservations[].Instances[].[Tags[?Key==`Name`] | [0].Value, Placement.AvailabilityZone,InstanceId, InstanceType, ImageId,State.Name, PrivateIpAddress, PublicIpAddress ]' --output table --region ${AWS_REGION}
 
 ```
 
@@ -255,7 +255,7 @@ $ aws ec2 describe-instances --query 'Reservations[].Instances[].[Tags[?Key==`Na
 session manager 명령을 통해 해당 인스턴스에 연결해 봅니다. (예. ANFW-VPC01-Private-A-10.1.21.101)
 
 ```
-aws ssm start-session --target $ANFW_VPC01_21_101 --region ap-northeast-1
+aws ssm start-session --target $ANFW_VPC01_21_101 --region ${AWS_REGION}
 
 ```
 
@@ -476,8 +476,8 @@ ALB 구성의 최종 구성 정보를 확인하고 , ALB를 생성합니다.&#x2
 웹 브라우저에서 앞서 복사해둔 ALB DNS A Record와 나머지 URL을 입력합니다.
 
 ```
-aws elbv2 describe-load-balancers --names ALB-VPC01 --region ap-northeast-1| jq -r '.LoadBalancers[].DNSName'
-export ANFW_ALB_VPC01_URL=$(aws elbv2 describe-load-balancers --names ALB-VPC01 --region ap-northeast-1 | jq -r '.LoadBalancers[].DNSName') 
+aws elbv2 describe-load-balancers --names ALB-VPC01 --region ${AWS_REGION}| jq -r '.LoadBalancers[].DNSName'
+export ANFW_ALB_VPC01_URL=$(aws elbv2 describe-load-balancers --names ALB-VPC01 --region ${AWS_REGION} | jq -r '.LoadBalancers[].DNSName') 
 echo "export ANFW_ALB_VPC01_URL=${ANFW_ALB_VPC01_URL}"| tee -a ~/.bash_profile
 curl $ANFW_ALB_VPC01_URL
 ```
