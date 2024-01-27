@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2022-06-12 / 2h'
+description: 'Update : 2024-01-27 / 2h'
 ---
 
 # ANFW Design
@@ -371,30 +371,31 @@ ANFW-VPC01-Private-Instance, ANFW-VPC02-Private-Instance를 각각 실행합니�
 
 기본 구성&#x20;
 
-* **`이름 : "ALB-VPC01"`** 와 같은 이름을 입력합니다.
-* **`체계 : "인터넷 경계"`** 를 선택합니다.
-* **`IP 주소유형 - "IPv4"`** 를 선택합니다.
+* **`Load balancer name (로드밸런서 이름) : "ALB-VPC01"`** , **`"ALB-VPC02"`**와 같은 이름을 입력합니다.
+* **`Scheme(체계) : "Internet-facing (인터넷 경계)"`** 를 선택합니다.
+* **`IP address Type (IP 주소유형) - "IPv4"`** 를 선택합니다.
+*
 
-![](<../.gitbook/assets/image (210) (1).png>)
+    <figure><img src="../.gitbook/assets/image (235).png" alt=""><figcaption></figcaption></figure>
 
 **네트워크 매핑**
 
 * **`VPC : "ANFW-N2SVPC"`** 와 같은 이름을 입력합니다.
-* **`매핑 : "ap-northeast-1a (ANFW-N2SVPC-Public-Subnet-A), ap-northeast-1c(ANFW-N2SVPC-Public-Subnet-B)"`** 를 선택합니다.
+* **`Mappings (매핑) : "ap-northeast-1a (ANFW-N2SVPC-Public-Subnet-A), ap-northeast-1c(ANFW-N2SVPC-Public-Subnet-B)"`** 를 선택합니다.
 
-![](<../.gitbook/assets/image (205) (1).png>)
+<figure><img src="../.gitbook/assets/image (236).png" alt=""><figcaption></figcaption></figure>
 
 **보안그룹**
 
-* **`보안 그룹 : "ALBSecurityGroup"`** 를 선택합니다
+* **`Security Group (보안 그룹) : "ALBSecurityGroup"`** 를 선택합니다.
 
-![](<../.gitbook/assets/image (218) (1) (1).png>)
+<figure><img src="../.gitbook/assets/image (237).png" alt=""><figcaption></figcaption></figure>
 
 리스너 및 라우팅
 
 Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합니다.
 
-![](<../.gitbook/assets/image (206) (1).png>)
+<figure><img src="../.gitbook/assets/image (238).png" alt=""><figcaption></figcaption></figure>
 
 **그룹 세부 정보 지정**
 
@@ -410,33 +411,17 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 /ec2meta-webpage/index.php
 ```
 
-![](<../.gitbook/assets/image (207) (1).png>)
-
-<figure><img src="../.gitbook/assets/image (20).png" alt=""><figcaption></figcaption></figure>
-
-* 대상유형 선택 - IP 주소 (다른 VPC의 인스턴스로 타겟그룹을 지정하기 위해서는 IP주소만 가능합니다)
-* 대상그룹 이름 - "**`VPC01-TG`**"**`, "VPC02-TG"`**
-* 프로토콜 - HTTP / 80
-* VPC - ANFW-N2SVPC 선택
-* 프로토콜 버전 - HTTP1
-* 상태검사 프로토콜 - HTTP
-* 상태검사 경로 - 아래를 복사해서 입력합니다.&#x20;
-
-```
-/ec2meta-webpage/index.php
-```
-
-
+<figure><img src="../.gitbook/assets/image (241).png" alt=""><figcaption></figcaption></figure>
 
 **대상등록**&#x20;
 
 대상 등록에서는 ANFW-N2SVPC 가 아닌, ANFW-VPC01,02의 인스턴스IP가 Target이 되어야 합니다.
 
-* 네트워크 : **`다른 프라이빗 IP 주소`** 를 선택합니다.
+* **`Network (네트워크 )`**: **`Other private IP address(다른 프라이빗 IP 주소)`** 를 선택합니다.
 * IP : ANFW-VPC01,02 의 IP 주소를 입력합니다.
-* 목록에 추가를 선택하여 ANFW-VPC01,VPC02의 대상등록을 완료합니다.
+* Include as pening below를 선택하여 ANFW-VPC01,VPC02의 대상등록을 완료합니다.
 
-<figure><img src="../.gitbook/assets/image (232).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (243).png" alt=""><figcaption></figcaption></figure>
 
 ```
 #ANFW-VPC01 IP address
@@ -452,18 +437,46 @@ Target Group (대상그룹) 생성을 선택해서, 새로운 창을 오픈합�
 10.2.22.102
 ```
 
-대상 그룹 생성이 완료되면 Application Load Balancer 생성 메뉴창으로 다시 돌아갑니다
+Target에 등록이 완료되면, "Create target Group"을 누르고 완료합니다.
+
+<figure><img src="../.gitbook/assets/image (244).png" alt=""><figcaption></figcaption></figure>
+
+Target Group 생성이 완료되면 Application Load Balancer 생성 메뉴창으로 다시 돌아갑니다
 
 아래 리스너 및 라우팅 메뉴에서, 앞서 생성한 대상그룹을 선택합니다
 
 * ALB-VPC01 - **`ANFW-VPC01-TG`**
 * ALB-VPC02 - **`ANFW-VPC02-TG`**
 
-![](<../.gitbook/assets/image (216).png>)
+<figure><img src="../.gitbook/assets/image (245).png" alt=""><figcaption></figcaption></figure>
+
+ALB 최종 구성하기 전에 , Tag 의 Key,Value를 설정합니다.
+
+<figure><img src="../.gitbook/assets/image (247).png" alt=""><figcaption></figcaption></figure>
+
+* ALB-VPC01
+* ALB-VPC02
 
 ALB 구성의 최종 구성 정보를 확인하고 , ALB를 생성합니다.&#x20;
 
+
+
 **`AWS 관리콘솔 - EC2 - 로드밸런서`** 에서 생성한 ANFW-VPC01,02 의 ALB로드밸런서를 확인합니다. **`ALB DNS A 레코드 값`**을 복사해 둡니다.
+
+아래와 같이 Cloud9 변수로 저장해서 확인하고, 저장해 두어도 됩니다.
+
+```
+export ALB_VPC01=ALB-VPC01
+export ALB_VPC02=ALB-VPC02
+export ALB_VPC01_URL=$(aws elbv2 describe-load-balancers --names ${ALB_VPC01} | jq -r '.LoadBalancers[].DNSName')
+echo "export ALB_VPC01-URL=${ALB_VPC01_URL}"| tee -a ~/.bash_profile
+export ALB_VPC02_URL=$(aws elbv2 describe-load-balancers --names ${ALB_VPC02} | jq -r '.LoadBalancers[].DNSName')
+echo "export ALB_VPC02-URL=${ALB_VPC02_URL}"| tee -a ~/.bash_profile
+
+echo "ALB-VPC01-URL = http://${ALB_VPC01_URL}/ec2meta-webpage/index.php
+echo "ALB-VPC02-URL = http://${ALB_VPC02_URL}/ec2meta-webpage/index.php
+
+```
 
 ![](<../.gitbook/assets/image (214) (1) (1).png>)
 
@@ -476,14 +489,8 @@ ALB 구성의 최종 구성 정보를 확인하고 , ALB를 생성합니다.&#x2
 웹 브라우저에서 앞서 복사해둔 ALB DNS A Record와 나머지 URL을 입력합니다.
 
 ```
-aws elbv2 describe-load-balancers --names ALB-VPC01 --region ${AWS_REGION}| jq -r '.LoadBalancers[].DNSName'
-export ANFW_ALB_VPC01_URL=$(aws elbv2 describe-load-balancers --names ALB-VPC01 --region ${AWS_REGION} | jq -r '.LoadBalancers[].DNSName') 
-echo "export ANFW_ALB_VPC01_URL=${ANFW_ALB_VPC01_URL}"| tee -a ~/.bash_profile
-curl $ANFW_ALB_VPC01_URL
-```
-
-```
-echo URL= http://${ANFW_ALB_VPC01_URL}/ec2meta-webpage/index.php
+echo "ALB-VPC01-URL = http://${ALB-VPC01-URL}/ec2meta-webpage/index.php
+echo "ALB-VPC02-URL = http://${ALB-VPC02-URL}/ec2meta-webpage/index.php
 ```
 
 ![](<../.gitbook/assets/image (201).png>)
