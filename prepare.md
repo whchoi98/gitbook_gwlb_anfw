@@ -153,24 +153,6 @@ aws ec2 import-key-pair --key-name "mykey" --public-key-material fileb://mykey.p
 
 ![](<.gitbook/assets/image (213).png>)
 
-## Session Manager Plugin 설치 및 기타 유틸리티 설치
-
-Session Manager는 AWS Systems Manager의 일부 기능입니다. Session Manager에서, EC2 인스턴스, 엣지 디바이스, 온프레미스 서버 및 가상 머신(VM)을 관리할 수 있습니다. 브라우저 기반 셸 또는 AWS Command Line Interface(AWS CLI)을 사용할 수 있습니다. Session Manager는 인바운드 포트를 열고, 배스천 호스트를 유지하고, SSH 키를 관리할 필요 없이 보안성과 감사 가능성을 갖춘 노드 관리 기능을 제공합니다.&#x20;
-
-또한 Session Manager를 통해 노드에 대한 제어된 액세스를 요구하는 회사 정책, 엄격한 보안 관행을 손쉽게 준수하고, 관리형 노드 액세스 세부 정보가 포함된 완전히 감사 가능한 로그를 제공합니다
-
-Workshop에서는 Cloud9에 아래와 같이 Plugin을 설치하면, Private Subnet의 인스턴스에 접속 할 수 있습니다
-
-```
-#session manager plugin 설치
-cd ~/environment
-curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
-sudo yum install -y session-manager-plugin.rpm
-git clone https://github.com/whchoi98/useful-shell.git
-
-sudo yum -y install jq gettext bash-completion moreutils
-```
-
 **이제 사전 구성이 완료되었습니다.**
 
 
