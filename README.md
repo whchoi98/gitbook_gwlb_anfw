@@ -4,7 +4,7 @@ description: 'update : 2024-01-27'
 
 # GWLB/ANFW Workshop
 
-## 목차&#x20;
+## [#eks](./#eks "mention")목차&#x20;
 
 ### :ballot\_box\_with\_check:[사전 준비 ](prepare.md#undefined)
 
@@ -16,7 +16,7 @@ description: 'update : 2024-01-27'
 
 ### :ballot\_box\_with\_check:[ANFW Design](anfw-aws-network-firewall/anfw-design.md#undefined)
 
-### :ballot\_box\_with\_check:[GWLB & ANFW Super LAB](./#gwlb-and-anfw-super-lab)
+### :ballot\_box\_with\_check:EKS 디자인
 
 #### written by Woohyung Choi (whchoi98@gmail.com) / (whchoi@amazon.com)
 
