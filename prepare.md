@@ -1,10 +1,10 @@
 ---
-description: 'Update : 2022-06-12/ 20min'
+description: 'Update : 2024-01-27/ 20min'
 ---
 
 # 사전 준비
 
-## 시작에 앞서&#x20;
+## 1.시작에 앞서&#x20;
 
 GWLB & ANFW(AWS Network Firewall) Workshop은 AWS 워크로드를 보호하기 위해서, TGW를 활용한 Centralized Design 방법으로 GWLB와 ANFW을 구성하는 방법을 제공합니다
 
@@ -16,112 +16,62 @@ GWLB & ANFW(AWS Network Firewall) Workshop은 AWS 워크로드를 보호하기 �
 
 AWS의 완전관리형 방화벽을 구성해서, 내외부 보안 정책을 구현해 봅니다. &#x20;
 
-## Cloud9 구성
+## 2.Cloud9 구성
 
 ### Cloud9 소개&#x20;
 
 AWS Cloud9은 브라우저만으로 코드를 작성, 실행 및 디버깅할 수 있는 클라우드 기반 IDE(통합 개발 환경)입니다. 코드 편집기, 디버거 및 터미널이 포함되어 있습니다. Cloud9은 JavaScript, Python, PHP를 비롯하여 널리 사용되는 프로그래밍 언어를 위한 필수 도구가 사전에 패키징되어 제공되므로, 새로운 프로젝트를 시작하기 위해 파일을 설치하거나 개발 머신을 구성할 필요가 없습니다. Cloud9 IDE는 클라우드 기반이므로, 인터넷이 연결된 머신을 사용하여 사무실, 집 또는 어디서든 프로젝트 작업을 할 수 있습니다. 또한, Cloud9은 서버리스 애플리케이션을 개발할 수 있는 원활한 환경을 제공하므로 손쉽게 서버리스 애플리케이션의 리소스를 정의하고, 디버깅하고, 로컬 실행과 원격 실행 간에 전환할 수 있습니다. Cloud9에서는 개발 환경을 팀과 신속하게 공유할 수 있으므로 프로그램을 연결하고 서로의 입력 값을 실시간으로 추적할 수 있습니다.
 
-### Cloud9 구성
+### Cloudshell 기반 생성
 
-Cloud9을 실행하기 위해 아래와 같이 AWS 관리콘솔에서 **`"Cloud9"`** 을 입력합니다.
+Cloud9을 실행하기 위해 아래와 같이 AWS 관리콘솔에서 **`"Cloudshell"`** 을 사용해서 구성합니다.
 
-![](<.gitbook/assets/image (87).png>)
+<figure><img src=".gitbook/assets/image (233).png" alt=""><figcaption></figcaption></figure>
+
+`아래와 같이 iam user와 패스워드, user를 위한 Policy를 생성해서 연결합니다.`
+
+```
+aws iam create-user --user-name ${user-name}
+aws iam create-login-profile --user-name user01 --password ${paddword] --no-password-reset-required
+aws iam attach-user-policy --user-name user01 --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+```
+
+제공된 AWS 계정에 손쉽게 접근하기  위해서 Alisa를 생성합니다. Alias는 고유해야 하므로 , 중복되지 않도록 합니다.
+
+```
+aws iam create-account-alias --account-alias ${alias-name}
+```
+
+앞서 생성한 Alias로 접속하고, 새로운 User로 인증해서 로그인 합니다.
+
+정상적으로 접속하면, 다시 CloudShell을 사용해서 , Cloud9을 구성합니다.
+
+```
+# 아래 git을 cloudshell에 복제합니다.
+git clone https://github.com/whchoi98/useful-shell.git
+
+# cloud9 을 생성합니다.2~3분 시간이 소요됩니다.
+~/useful-shell/create-cloud9.sh
+
+```
+
+### Cloud9 환경 구성
 
 **`AWS 관리 콘솔 - Cloud9 - Create environment`**를 선택합니다.
 
-* name : mycloud9
+생성된 Cloud9을 콘솔에서 열고, 새로운 터미널을 생성합니다.
 
-![](<.gitbook/assets/image (203) (1) (1) (1).png>)
-
-모든 설정을 기본값으로 사용하고, 인스턴스타입은 t3.small ,Cost-Saving Setting Never로 변경합니다. 절전모드로 변경되는 것을 방지하게 됩니다. 다음 진행 버튼을 계속 누르고 Cloud9을 생성합니다.
-
-* instance type : t3.small
-* Cost-saving setting : Never
-* 기타 옵션 : 기본
-
-![](<.gitbook/assets/image (88).png>)
-
-2\~3분 후에 Cloud9 이 동작하는 것을 확인 할 수 있습니다. Cloud9 창에서 "+" 버튼을 누르고 New Terminal을 띄워서 터미널을 생성합니다. 추가로 "+"를 계속 생성하게 되면 Terminal을 다중으로 사용할 수 있습니다.
+<figure><img src=".gitbook/assets/image (234).png" alt=""><figcaption></figcaption></figure>
 
 ![](<.gitbook/assets/image (15).png>)
 
-Cloud9 IDE는 이미 AWS CLI가 설치되어 있습니다. 하지만 기본 1.x 버전이 설치되어 있습니다.
+새로운 터미널에서 필요한 도구를 설치합니다.
 
 ```
-$ aws --version
-aws-cli/1.19.39 Python/2.7.18 Linux/4.14.225-169.362.amzn2.x86_64 botocore/1.20.39
-```
-
-아래 명령을 통해 CLI를 2.0으로 업그레이드합니다.
+git clone https://github.com/whchoi98/useful-shell.git
+~/environment/useful-shell/c9-tool-set.sh
 
 ```
-# AWS CLI upgrade
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-
-```
-
-정상적으로 업그레이드 되었는지 확인합니다.
-
-```
-source ~/.bashrc
-aws --version
-
-```
-
-aws cli 자동완성을 설치 합니다.
-
-```
-# aws cli 자동완성 설치 
-which aws_completer
-export PATH=/usr/local/bin:$PATH
-source ~/.bash_profile
-complete -C '/usr/local/bin/aws_completer' aws
-
-```
-
-
-
-Cloud9 권한 부여
-
-이 랩에서는 ap-northeast-2에서 생성한 Cloud9이 다른 리전의 자원을 제어하도록 구성되어 있습니다. 권한을 부여해서 사용합니다.&#x20;
-
-먼저 아래와 같이 IAM에서 역할을 선택합니다.&#x20;
-
-* IAM - 역할 - 역할 만들기
-
-![](<.gitbook/assets/image (217).png>)
-
-* AWS 서비스 - EC2 선택
-
-![](<.gitbook/assets/image (228).png>)
-
-* 권한 추가 - AdministratorAccess 선택
-
-![](<.gitbook/assets/image (223).png>)
-
-* 역할 세부 정보에 역할 이름을 입력합니다. (예. Cloud9-Admin)
-* 하단의 역할 생성을 선택합니다.&#x20;
-
-![](<.gitbook/assets/image (213) (1).png>)
-
-Cloud 9의 역할을 변경하기 위해서, IAM 역할을 수정합니다
-
-* AWS 서비스 - EC2 - 인스턴스 - Cloud9 선택 - 작업 - 보안 - IAM 역할 수정
-
-![](<.gitbook/assets/image (212) (1).png>)
-
-* IAM의 역할을 위에서 만든 역할 이름으로 변경하고 업데이트 합니다.&#x20;
-
-![](<.gitbook/assets/image (208).png>)
-
-Cloud9 화면의 우측 상단 톱니바퀴를 선택하고, 아래에서 처럼 AWS Settings의 Credential 을 변경합니다.&#x20;
-
-![](<.gitbook/assets/image (222) (1).png>)
-
-
 
 ## keypair 만들기
 
