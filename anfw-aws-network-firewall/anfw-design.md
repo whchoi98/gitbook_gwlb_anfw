@@ -473,8 +473,8 @@ echo "export ALB_VPC01-URL=${ALB_VPC01_URL}"| tee -a ~/.bash_profile
 export ALB_VPC02_URL=$(aws elbv2 describe-load-balancers --names ${ALB_VPC02} | jq -r '.LoadBalancers[].DNSName')
 echo "export ALB_VPC02-URL=${ALB_VPC02_URL}"| tee -a ~/.bash_profile
 
-echo "ALB-VPC01-URL = http://${ALB_VPC01_URL}/ec2meta-webpage/index.php
-echo "ALB-VPC02-URL = http://${ALB_VPC02_URL}/ec2meta-webpage/index.php
+echo "ALB-VPC01-URL = http://${ALB_VPC01_URL}/ec2meta-webpage/index.php"
+echo "ALB-VPC02-URL = http://${ALB_VPC02_URL}/ec2meta-webpage/index.php"
 
 ```
 
@@ -489,8 +489,10 @@ echo "ALB-VPC02-URL = http://${ALB_VPC02_URL}/ec2meta-webpage/index.php
 웹 브라우저에서 앞서 복사해둔 ALB DNS A Record와 나머지 URL을 입력합니다.
 
 ```
-echo "ALB-VPC01-URL = http://${ALB-VPC01-URL}/ec2meta-webpage/index.php
-echo "ALB-VPC02-URL = http://${ALB-VPC02-URL}/ec2meta-webpage/index.php
+echo "ALB-VPC01-URL = http://${ALB_VPC01_URL}/ec2meta-webpage/index.php"
+
+echo "ALB-VPC02-URL = http://${ALB_VPC02_URL}/ec2meta-webpage/index.php"
+
 ```
 
 ![](<../.gitbook/assets/image (201).png>)
@@ -563,16 +565,8 @@ ALB-VPC02 DNS 주소를 입력하고 Cloud9 터미널에서 Curl을 실행하거
 * ALB-VPC01, 02 주소 확인 및 보안 적용 확인&#x20;
 
 ```
-#ALB-VPC01
-export ALBVPC01URL=$(aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,Scheme,DNSName,VpcId]" --output text --region ap-northeast-1 | awk '/ALB-VPC01-/ {print $3}')
-echo $ALBVPC01URL
-
-#ALB-VPC02
-export ALBVPC02URL=$(aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,Scheme,DNSName,VpcId]" --output text --region ap-northeast-1 | awk '/ALB-VPC02-/ {print $3}')
-echo $ALBVPC02URL
-
-curl -v  $ALBVPC01URL/ec2meta-webpage/index.php -I
-curl -v  $ALBVPC02URL/ec2meta-webpage/index.php -I
+curl -v  http://${ALB_VPC01_URL}/ec2meta-webpage/index.php -I
+curl -v  http://${ALB_VPC02_URL}/ec2meta-webpage/index.php -I
 
 ```
 
@@ -631,16 +625,8 @@ ALB-VPC02 DNS 주소를 입력하고 Cloud9 터미널에서 Curl을 실행하거
 * ALB-VPC01, 02 주소 확인 및 보안 적용 확인&#x20;
 
 ```
-#ALB-VPC01
-export ALBVPC01URL=$(aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,Scheme,DNSName,VpcId]" --output text --region ap-northeast-1 | awk '/ALB-VPC01-/ {print $3}')
-echo $ALBVPC01URL
-
-#ALB-VPC02
-export ALBVPC02URL=$(aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,Scheme,DNSName,VpcId]" --output text --region ap-northeast-1 | awk '/ALB-VPC02-/ {print $3}')
-echo $ALBVPC02URL
-
-curl -v  $ALBVPC02URL/ec2meta-webpage/index.php -I
-curl -v  $ALBVPC01URL/ec2meta-webpage/index.php -I
+curl -v  http://${ALB_VPC01_URL}/ec2meta-webpage/index.php -I
+curl -v  http://${ALB_VPC02_URL}/ec2meta-webpage/index.php -I
 
 ```
 
@@ -711,13 +697,9 @@ drop http any any -> $ALB_VPC02 any (msg: "User agent"; http.user_agent; content
 이제 Web 브라우저에서 접속해 봅니다.
 
 ```
-#ALB-VPC01
-export ALBVPC01URL=$(aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,Scheme,DNSName,VpcId]" --output text --region ap-northeast-1 | awk '/ALB-VPC01-/ {print $3}')
-echo $ALBVPC01URL/ec2meta-webpage/index.php
-
-#ALB-VPC02
-export ALBVPC02URL=$(aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,Scheme,DNSName,VpcId]" --output text --region ap-northeast-1 | awk '/ALB-VPC02-/ {print $3}')
-echo ${ALBVPC02URL}/ec2meta-webpage/index.php
+#ALB-VPC01,02
+curl -v  http://${ALB_VPC01_URL}/ec2meta-webpage/index.php -I
+curl -v  http://${ALB_VPC02_URL}/ec2meta-webpage/index.php -I
 
 ```
 
@@ -773,3 +755,5 @@ aws cloudformation delete-stack --stack-name N2SVPC --region ap-northeast-1
 ```
 
 랩을 완전히 종료하려면 **`AWS 관리콘솔 - Cloudformation - 스택`** aws cloud9 콘솔 스택도 삭제합니다.
+
+다음 EKS 디자인 적용 랩을 진행하려면 삭제하지 않습니다.
