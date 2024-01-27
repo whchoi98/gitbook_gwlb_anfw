@@ -8,5 +8,5 @@
 * [ANFW (Amazon Network Firewall)](anfw-aws-network-firewall/README.md)
   * [ANFW 소개](anfw-aws-network-firewall/anfw-overview.md)
   * [ANFW Design](anfw-aws-network-firewall/anfw-design.md)
-* [EKS 디자인](eks.md)
-* [Page 1](page-1.md)
+* [EKS 디자인](eks/README.md)
+  * [EKS 설치](eks/eks.md)
