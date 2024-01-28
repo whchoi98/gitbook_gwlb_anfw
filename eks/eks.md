@@ -67,5 +67,5 @@ eksctl create iamidentitymapping \
 
 EKS 콘솔에서 아래와 같은 정보가 출력되었는지 확인해 봅니다.
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 

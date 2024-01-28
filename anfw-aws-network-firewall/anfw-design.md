@@ -692,7 +692,7 @@ drop http any any -> $ALB_VPC02 any (msg: "User agent"; http.user_agent; content
 
 **`"allpermit-ANFW-N2SVPC"` 상태 저장 규칙 그룹**을 **`정책에서 연결 해제`**합니다.
 
-<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 이제 Web 브라우저에서 접속해 봅니다.
 
