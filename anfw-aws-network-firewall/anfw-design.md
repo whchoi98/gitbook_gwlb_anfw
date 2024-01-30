@@ -469,12 +469,12 @@ ALB 구성의 최종 구성 정보를 확인하고 , ALB를 생성합니다.&#x2
 export ALB_VPC01=ALB-VPC01
 export ALB_VPC02=ALB-VPC02
 export ALB_VPC01_URL=$(aws elbv2 describe-load-balancers --names ${ALB_VPC01} | jq -r '.LoadBalancers[].DNSName')
-echo "export ALB_VPC01-URL=${ALB_VPC01_URL}"| tee -a ~/.bash_profile
+echo "export ALB_VPC01_URL=${ALB_VPC01_URL}"| tee -a ~/.bash_profile
 export ALB_VPC02_URL=$(aws elbv2 describe-load-balancers --names ${ALB_VPC02} | jq -r '.LoadBalancers[].DNSName')
-echo "export ALB_VPC02-URL=${ALB_VPC02_URL}"| tee -a ~/.bash_profile
+echo "export ALB_VPC02_URL=${ALB_VPC02_URL}"| tee -a ~/.bash_profile
 
-echo "ALB-VPC01-URL = http://${ALB_VPC01_URL}/ec2meta-webpage/index.php"
-echo "ALB-VPC02-URL = http://${ALB_VPC02_URL}/ec2meta-webpage/index.php"
+echo "ALB-VPC01_URL = http://${ALB_VPC01_URL}/ec2meta-webpage/index.php"
+echo "ALB-VPC02_URL = http://${ALB_VPC02_URL}/ec2meta-webpage/index.php"
 
 ```
 
@@ -489,9 +489,9 @@ echo "ALB-VPC02-URL = http://${ALB_VPC02_URL}/ec2meta-webpage/index.php"
 웹 브라우저에서 앞서 복사해둔 ALB DNS A Record와 나머지 URL을 입력합니다.
 
 ```
-echo "ALB-VPC01-URL = http://${ALB_VPC01_URL}/ec2meta-webpage/index.php"
+echo "ALB-VPC01_URL = http://${ALB_VPC01_URL}/ec2meta-webpage/index.php"
 
-echo "ALB-VPC02-URL = http://${ALB_VPC02_URL}/ec2meta-webpage/index.php"
+echo "ALB-VPC02_URL = http://${ALB_VPC02_URL}/ec2meta-webpage/index.php"
 
 ```
 
