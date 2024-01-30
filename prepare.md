@@ -31,9 +31,11 @@ Cloud9을 실행하기 위해 아래와 같이 AWS 관리콘솔에서 **`"Clouds
 `아래와 같이 iam user와 패스워드, user를 위한 Policy를 생성해서 연결합니다.`
 
 ```
-aws iam create-user --user-name ${user-name}
-aws iam create-login-profile --user-name user01 --password ${paddword] --no-password-reset-required
-aws iam attach-user-policy --user-name user01 --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+export user_name=user01
+export pass_word=1234Qwer
+aws iam create-user --user-name ${user_name}
+aws iam create-login-profile --user-name ${user_name} --password ${pass_word} --no-password-reset-required
+aws iam attach-user-policy --user-name ${user_name} --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
 ```
 
 제공된 AWS 계정에 손쉽게 접근하기  위해서 Alisa를 생성합니다. Alias는 고유해야 하므로 , 중복되지 않도록 합니다.
