@@ -13,7 +13,7 @@ description: 'Update : 2024.01.27'
 eks 설치를 위해서 Tool들을 설치해야 합니다. 사전에 github에서 복제 해 둔 shell을 아래와 같이 실행합니다.
 
 ```
-~/environment/useful-shell/c9-tool-set.sh
+~/environment/useful-shell/eks_tools.sh
 
 ```
 

@@ -9,7 +9,7 @@ description: 'Update : 2024-01-27'
 EKS Workload 구성을 위해 아래 Git 을 복제합니다.
 
 ```
-cd ~
+cd ~/environment
 git clone https://github.com/whchoi98/myeks
 
 ```
@@ -36,6 +36,7 @@ AWS Load Balancer Controller의 `kube-system` 네임스페이스에 `aws-load-ba
 아래는 `eksctl` 을 사용하는 방법입니다.
 
 ```
+export CLUSTER1_NAME="C1"
 eksctl create iamserviceaccount \
   --cluster=${CLUSTER1_NAME} \
   --namespace=kube-system \
@@ -79,7 +80,7 @@ aws-load-balancer-controller   2/2     2            2           9s
 테스트를 하기 위한 간단한 K8s Sample App을 배포합니다.
 
 ```
-kubectl apply -f ./network-test/nlb-test-03.yaml
+kubectl apply -f ~/environment/myeks/network-test/nlb-test-03.yaml
 
 ```
 
@@ -110,7 +111,7 @@ spec:
       targetPort: 80
 EoF
 
-kubectl apply -f ./network-test/nlb-test-03-svc.yaml
+kubectl apply -f  ~/environment/myeks/network-test/nlb-test-03-svc.yaml
 
 ```
 
