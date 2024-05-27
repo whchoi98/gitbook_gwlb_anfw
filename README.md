@@ -4,8 +4,6 @@ description: 'update : 2024-01-27'
 
 # GWLB/ANFW Workshop
 
-## [#eks](./#eks "mention")[#eks](./#eks "mention")목차&#x20;
-
 ### :ballot\_box\_with\_check:[사전 준비 ](prepare.md#undefined)
 
 ### :ballot\_box\_with\_check:[GWLB 소개](gwlb-gateway-load-balancer/gwlb-overview.md#overview)
