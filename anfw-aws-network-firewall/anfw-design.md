@@ -67,7 +67,6 @@ aws cloudformation deploy \
   --stack-name "ANFW-N2SVPC" \
   --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/1.ANFW-N2SVPC.yml" \
   --parameter-overrides \
-    "KeyPair=$KeyName" \
     "AvailabilityZoneA=ap-northeast-2a" \
     "AvailabilityZoneB=ap-northeast-2b" \
     "InstanceType=t3.small" \
@@ -101,7 +100,6 @@ aws cloudformation deploy \
   --stack-name "ANFW-VPC01" \
   --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/2.ANFW-VPC01.yml" \
   --parameter-overrides \
-    "KeyPair=$KeyName" \
     "AvailabilityZoneA=ap-northeast-2a" \
     "AvailabilityZoneB=ap-northeast-2b" \
     "InstanceType=t3.small" \
@@ -116,7 +114,6 @@ aws cloudformation deploy \
   --stack-name "ANFW-VPC02" \
   --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/3.ANFW-VPC02.yml" \
   --parameter-overrides \
-    "KeyPair=$KeyName" \
     "AvailabilityZoneA=ap-northeast-2a" \
     "AvailabilityZoneB=ap-northeast-2b" \
     "InstanceType=t3.small" \
