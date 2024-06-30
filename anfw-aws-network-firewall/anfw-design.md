@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2024-01-27 / 2h'
+description: 'Update : 2024-06-24 / 2h'
 ---
 
 # ANFW Design
@@ -55,11 +55,8 @@ N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. �
 * VPC1CIDRBlock : 10.1.0.0/16 (VPC1의 CIDR Block 주소를 선언합니다.)
 * VPC2CIDRBlock: 10.2.0.0/16 (VPC2의 CIDR Block 주소를 선언합니다.)
 * InstanceTyep: t3.small
-* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. mykey, 사전 준비에서 변수로 입력해 두었습니다)
 
 ```
-export KeyName=mykey
-echo "export KeyName=${KeyName}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 export AWS_REGION=ap-northeast-2
 aws cloudformation deploy \
@@ -91,7 +88,6 @@ VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC�
 * TGWSubnetABlock:10.1.251.0/24 (VPC01), 10.2.251.0/24 (VPC02)
 * TGWSubnetBBlock:10.1.252.0/24 (VPC01), 10.2.252.0/24 (VPC02)
 * InstanceTyep: t3.small
-* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. mykey, 사전 준비에서 변수로 입력해 두었습니다)
 
 ```
 export AWS_REGION=ap-northeast-2
