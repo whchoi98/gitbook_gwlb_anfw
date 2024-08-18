@@ -195,7 +195,7 @@ fields @timestamp, @message, @logStream, @log
 
 실제 ANFW의 로그를 분석해 봅니다.
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 * dest\_ip : ELB(ALB)의 Internal CIDR 주소입니다.
 * src\_ip  :  Cloud9 의 Public IP 주소입니다.
