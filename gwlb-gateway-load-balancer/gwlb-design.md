@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2022-06-12'
+description: 'Update : 2024-08-18'
 ---
 
 # GWLB Design
@@ -18,7 +18,7 @@ ALB(Application Load Balancer)를 GWLB와 연계하는 VPC에 배치해서, 내�
 
 ### 1.VPC yaml 파일 다운로드
 
-Cloud9 콘솔에서 아래 github로 부터 VPC yaml 파일을 다운로드 합니다.&#x20;
+Code-Server 콘솔에서 아래 github로 부터 VPC yaml 파일을 다운로드 합니다.&#x20;
 
 ```
 cd ~/environment
@@ -50,21 +50,12 @@ Cloud9 터미널에서 AWS CLI의 Cloudformation 명령을 통해 GWLBVPC를 배
 * PublicSubnetABlock: 10.254.11.0/24
 * PublicSubnetBBlock: 10.254.12.0/24
 * InstanceTyep: t3.small
-* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다. (예. mykey)
 
 ```
-export KeyName=mykey
-echo "export KeyName=${KeyName}" | tee -a ~/.bash_profile
-source ~/.bash_profile
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "GWLBVPC" \
-  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/1.GWLBVPC.yml" \
-  --parameter-overrides \
-    "KeyPair=$KeyName" \
-    "AvailabilityZoneA=ap-northeast-2a" \
-    "AvailabilityZoneB=ap-northeast-2b" \
-    "InstanceType=t3.small" \
+  --template-file "~/gwlb_anfw/gwlb/1.GWLBVPC.yml" \
   --capabilities CAPABILITY_NAMED_IAM
   
 ```
@@ -112,19 +103,16 @@ N2SVPC를 Cloudformation에서 앞서 과정과 동일하게 생성합니다. �
 * VPC2CIDRBlock: 10.2.0.0/16 (VPC2의 CIDR Block 주소를 선언합니다.)
 * VPCEndpointServiceName : 앞서 복사해둔 GWLBVPC의 VPC endpoint service name을 입력합니다.
 * InstanceTyep: t3.small
-* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예.mykey)
+
+
 
 ```
 source ~/.bash_profile
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "N2SVPC" \
-  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/2.N2SVPC.yml" \
+  --template-file "~/gwlb_anfw/gwlb/2.N2SVPC.yml" \
   --parameter-overrides \
-    "KeyPair=$KeyName" \
-    "AvailabilityZoneA=ap-northeast-2a" \
-    "AvailabilityZoneB=ap-northeast-2b" \
-    "InstanceType=t3.small" \
     "VPCEndpointServiceName=$VPCEndpointServiceName" \
   --capabilities CAPABILITY_NAMED_IAM
   
@@ -147,52 +135,19 @@ VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC�
 * TGWSubnetABlock:10.1.251.0/24 (VPC01), 10.2.251.0/24 (VPC02)
 * TGWSubnetBBlock:10.1.252.0/24 (VPC01), 10.2.252.0/24 (VPC02)
 * InstanceTyep: t3.small
-* KeyPair : 사전에 만들어 둔 keyPair를 사용합니다.(예. mykey)
 
 ```
 source ~/.bash_profile
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "VPC01" \
-  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/3.VPC01.yml" \
-  --parameter-overrides \
-    "KeyPair=$KeyName" \
-    "AvailabilityZoneA=ap-northeast-2a" \
-    "AvailabilityZoneB=ap-northeast-2b" \
-    "InstanceType=t3.small" \
-    "VPCEndpointServiceName=$VPCEndpointServiceName" \
-  --capabilities CAPABILITY_NAMED_IAM
-  
-```
-
-```
-source ~/.bash_profile
+  --template-file "~/gwlb_anfw/gwlb/3.VPC01.yml" \
+  --capabilities CAPABILITY_NAMED_IAM &
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "VPC02" \
-  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/4.VPC02.yml" \
-  --parameter-overrides \
-    "KeyPair=$KeyName" \
-    "AvailabilityZoneA=ap-northeast-2a" \
-    "AvailabilityZoneB=ap-northeast-2b" \
-    "InstanceType=t3.small" \
-  --capabilities CAPABILITY_NAMED_IAM
-  
-```
-
-N2SVPC, VPC01,02,03 을 연결할 TGW를 생성합니다. N2STGW는 TGW Routing Table과 각 VPC들이 Route Table을 자동으로 구성해 줍니다.
-
-* Stack Name : GWLBTGW
-* DefaultRouteBlock: 0.0.0.0/0
-* VPC01CIDRBlock: 10.1.0.0/16
-* VPC02CIDRBlock: 10.2.0.0/16
-
-```
-source ~/.bash_profile
-aws cloudformation deploy \
-  --region ap-northeast-2 \
-  --stack-name "GWLBTGW" \
-  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/5.GWLBTGW.yml" 
+  --template-file "~/gwlb_anfw/gwlb/4.VPC02.yml" \
+  --capabilities CAPABILITY_NAMED_IAM &
   
 ```
 
@@ -205,8 +160,6 @@ aws cloudformation deploy \
 **`AWS 관리 콘솔 - VPC 대시 보드 - 서브넷`**
 
 ![](<../.gitbook/assets/image (158).png>)
-
-####
 
 ### 5. TransitGateway 배포
 
@@ -221,7 +174,7 @@ N2SVPC, VPC01,02,03 을 연결할 TGW를 생성합니다. N2STGW는 TGW Routing 
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "GWLBTGW" \
-  --template-file "/home/ec2-user/environment/gwlb_anfw/gwlb/5.GWLBTGW.yml" 
+  --template-file "~/gwlb_anfw/gwlb/5.GWLBTGW.yml"
   
 ```
 
@@ -331,7 +284,7 @@ Appliance 구성 정보를 확인해 봅니다.
 
 ```
 #ec2 id 에 대한 환경변수 설정
-~/environment/gwlb_anfw/gwlb/gwlb_ec2_shell.sh
+~/gwlb_anfw/gwlb/gwlb_ec2_shell.sh
 
 ```
 
@@ -429,107 +382,7 @@ GENEVE 터널링의 GWLB IP주소는 10.254.12.101 이며, Appliance IP와 터�
 
 VPC01,02의 EC2에서 외부로 정상적으로 트래픽이 처리되는 지 확인 해 봅니다.
 
-Cloud9 터미널을 다시 접속해서 , VPC 01,02의 Private Subnet 에 배치된 EC2 인스턴스에 접속해 봅니다. Private Subnet은 직접 연결이 불가능하기 때문에 Session Manager를 통해 접속합니다.
-
-VPC01,02 을 Cloudformation을 통해 배포할 때 해당 인스턴스들에 Session Manager 접속을 위한 Role과 Session Manager 연결을 위한 Endpoint가 이미 구성되어 있습니다.
-
-```
-##############################################
-# Create-Private-EC2: VPC Private EC2 Create #
-##############################################
-
-  PrivateAInstanace1:
-    Type: AWS::EC2::Instance
-    DependsOn: PrivateSubnetA
-    Properties:
-      SubnetId: !Ref PrivateSubnetA
-      ImageId: !Ref LatestAmiId
-      PrivateIpAddress: 10.1.21.101
-      InstanceType: !Ref InstanceType
-      SecurityGroupIds: 
-        - Ref: PrivateEC2SG
-      KeyName: !Ref KeyPair
-      IamInstanceProfile: !Ref InstanceProfileSSM
-#생략 
-###############################################
-# Create-SSM: Create PrivateServer ServerRole #
-###############################################
-
-  ServerRoleSSM:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: !Sub '${AWS::StackName}-SSMRole'
-      Path: "/"
-      ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - ec2.amazonaws.com
-            Action:
-              - sts:AssumeRole
-
-  InstanceProfileSSM:
-    Type: AWS::IAM::InstanceProfile
-    Properties:
-      Path: "/"
-      Roles: 
-        - Ref: ServerRoleSSM
-  #이하 생략 
-```
-
-아래 그림에서 처럼 확인해 볼 수 있습니다.
-
-**`AWS 관리콘솔 - VPC 대시보드 - VPC - 앤드포인트`** 에서 SSM(Session Manager) 관련 VPC Endpoint 배포를 확인해 봅니다.
-
-![](<../.gitbook/assets/image (181).png>)
-
-**`AWS 관리콘솔 - EC2 대시보드 - 인스턴스`** 에서 VPC1,2 인스턴스를 선택하고 IAM Profile이 정상적으로 구성되었는지 확인합니다.
-
-![](<../.gitbook/assets/image (182).png>)
-
-session manager 기반으로 접속하기 위해, 아래 명령을 실행하여 ec2 인스턴스의 id값을 확인합니다.
-
-```
-cd ~/environment/useful-shell/
-./aws_ec2_ext.sh
-
-```
-
-아래와 같이 결과를 확인 할 수 있습니다.
-
-```
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-|                                                                                    DescribeInstances                                                                                   |
-+-------------------------------------------------------+------------------+----------------------+------------+------------------------+-------------+----------------+-----------------+
-|  GWLBVPC-Appliance-10.254.11.101                      |  ap-northeast-2a |  i-0e53c1595370536ac |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.254.11.101 |  3.36.124.171   |
-|  GWLBVPC-Appliance-10.254.11.102                      |  ap-northeast-2a |  i-0683c719c270c11b9 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.254.11.102 |  52.79.194.188  |
-|  N2SVPC-Private-A-10.11.21.102                        |  ap-northeast-2a |  i-0ccb671c609d92a0f |  t3.small  |  ami-0195322846474ddb9 |  terminated |  None          |  None           |
-|  N2SVPC-Private-A-10.11.21.101                        |  ap-northeast-2a |  i-04f6600a11f2d568f |  t3.small  |  ami-0195322846474ddb9 |  terminated |  None          |  None           |
-|  N2SVPC-Private-A-10.11.21.101                        |  ap-northeast-2a |  i-04079d7490efb71b2 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.11.21.101  |  None           |
-|  N2SVPC-Private-A-10.11.21.102                        |  ap-northeast-2a |  i-06887be3fa2daf34a |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.11.21.102  |  None           |
-|  VPC01-Private-A-10.1.21.102                          |  ap-northeast-2a |  i-0685213701f74711d |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.1.21.102   |  13.124.252.79  |
-|  VPC02-Private-A-10.2.21.101                          |  ap-northeast-2a |  i-019d20c34a59aaa91 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.2.21.101   |  3.35.140.217   |
-|  VPC01-Private-A-10.1.21.101                          |  ap-northeast-2a |  i-059790ccfcb6902b8 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.1.21.101   |  13.125.102.19  |
-|  VPC02-Private-A-10.2.21.102                          |  ap-northeast-2a |  i-091682bcbf7ec61a9 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.2.21.102   |  3.38.117.105   |
-|  GWLBVPC-Appliance-10.254.12.102                      |  ap-northeast-2b |  i-039485c78d4b1a81e |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.254.12.102 |  43.200.70.169  |
-|  N2SVPC-Private-B-10.11.22.101                        |  ap-northeast-2b |  i-043ec52692a255d0e |  t3.small  |  ami-0195322846474ddb9 |  terminated |  None          |  None           |
-|  GWLBVPC-Appliance-10.254.12.101                      |  ap-northeast-2b |  i-01336258ad94d60ff |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.254.12.101 |  3.38.177.248   |
-|  N2SVPC-Private-B-10.11.22.102                        |  ap-northeast-2b |  i-07922ac93d46ecc58 |  t3.small  |  ami-0195322846474ddb9 |  terminated |  None          |  None           |
-|  N2SVPC-Private-B-10.11.22.101                        |  ap-northeast-2b |  i-0f92545c86842f92a |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.11.22.101  |  None           |
-|  VPC02-Private-B-10.2.22.102                          |  ap-northeast-2b |  i-04705447e21e72f32 |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.2.22.102   |  3.38.196.80    |
-|  VPC01-Private-B-10.1.22.102                          |  ap-northeast-2b |  i-02143e7c9703c1b9b |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.1.22.102   |  43.200.71.50   |
-|  N2SVPC-Private-B-10.11.22.102                        |  ap-northeast-2b |  i-0f822c9e5d99e404a |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.11.22.102  |  None           |
-|  VPC02-Private-B-10.2.22.101                          |  ap-northeast-2b |  i-0354949eeaeb050aa |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.2.22.101   |  3.37.28.18     |
-|  VPC01-Private-B-10.1.22.101                          |  ap-northeast-2b |  i-01daba6e46deec87f |  t3.small  |  ami-0195322846474ddb9 |  running    |  10.1.22.101   |  3.38.187.82    |
-|  aws-cloud9-mycloud9-bae72d4b070b45ebbd1f9b45c848d6fe |  ap-northeast-2c |  i-04c7b1f40febf6c23 |  m5.xlarge |  ami-064777efad1575a54 |  running    |  172.31.35.101 |  54.180.93.63   |
-+-------------------------------------------------------+------------------+----------------------+------------+------------------------+-------------+----------------+-----------------+
-```
-
-
+Code-Server 터미널을 다시 접속해서 , VPC 01,02의 Private Subnet 에 배치된 EC2 인스턴스에 접속해 봅니다. Private Subnet은 직접 연결이 불가능하기 때문에 Session Manager를 통해 접속합니다.
 
 session manager 명령을 통해 해당 인스턴스에 연결해 봅니다. (예. VPC01-Private-A-10.1.21.101)
 
@@ -566,7 +419,7 @@ PING aws.com (99.86.206.123) 56(84) bytes of data.
 
 아래와 같이 2개의 Appliance에 SSH로 연결해서 명령을 실행해 보고, Appliance로 Traffic이 들어오는지 확인해 봅니다.
 
-Cloud9 터미널 1
+Code-Server 터미널 1
 
 ```
 #Appliance1 terminal
@@ -829,6 +682,10 @@ aws elbv2 describe-load-balancers --names ALB-VPC01 | jq -r '.LoadBalancers[].DN
 export ALB_VPC01_URL=$(aws elbv2 describe-load-balancers --names ALB-VPC01 | jq -r '.LoadBalancers[].DNSName') 
 echo "export ALB_VPC01_URL=${ALB_VPC01_URL}"| tee -a ~/.bash_profile
 curl $ALB_VPC01_URL
+```
+
+```
+http://{ALB_VPC01_URL}/ec2meta-webpage/index.php
 ```
 
 ![](<../.gitbook/assets/image (201).png>)
