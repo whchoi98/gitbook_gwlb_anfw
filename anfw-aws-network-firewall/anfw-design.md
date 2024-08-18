@@ -62,11 +62,7 @@ export AWS_REGION=ap-northeast-2
 aws cloudformation deploy \
   --region ${AWS_REGION} \
   --stack-name "ANFW-N2SVPC" \
-  --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/1.ANFW-N2SVPC.yml" \
-  --parameter-overrides \
-    "AvailabilityZoneA=ap-northeast-2a" \
-    "AvailabilityZoneB=ap-northeast-2b" \
-    "InstanceType=t3.small" \
+  --template-file "~/gwlb_anfw/anfw/1.ANFW-N2SVPC.yml" \
   --capabilities CAPABILITY_NAMED_IAM
   
 ```
@@ -89,33 +85,18 @@ VPC는 계정당 기본 5개가 할당되어 있습니다. 1개는 Default VPC�
 * TGWSubnetBBlock:10.1.252.0/24 (VPC01), 10.2.252.0/24 (VPC02)
 * InstanceTyep: t3.small
 
-```
-export AWS_REGION=ap-northeast-2
+<pre><code>export AWS_REGION=ap-northeast-2
 aws cloudformation deploy \
   --region ${AWS_REGION}  \
   --stack-name "ANFW-VPC01" \
-  --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/2.ANFW-VPC01.yml" \
-  --parameter-overrides \
-    "AvailabilityZoneA=ap-northeast-2a" \
-    "AvailabilityZoneB=ap-northeast-2b" \
-    "InstanceType=t3.small" \
-  --capabilities CAPABILITY_NAMED_IAM
-  
-```
-
-```
-export AWS_REGION=ap-northeast-2
-aws cloudformation deploy \
-  --region ${AWS_REGION} \
+  --template-file "~/gwlb_anfw/anfw/2.ANFW-VPC01.yml" \
+  --capabilities CAPABILITY_NAMED_IAM &#x26;
+<strong>aws cloudformation deploy \
+</strong>  --region ${AWS_REGION} \
   --stack-name "ANFW-VPC02" \
-  --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/3.ANFW-VPC02.yml" \
-  --parameter-overrides \
-    "AvailabilityZoneA=ap-northeast-2a" \
-    "AvailabilityZoneB=ap-northeast-2b" \
-    "InstanceType=t3.small" \
-  --capabilities CAPABILITY_NAMED_IAM
-  
-```
+  --template-file "~/gwlb_anfw/anfw/3.ANFW-VPC02.yml" \
+  --capabilities CAPABILITY_NAMED_IAM 
+</code></pre>
 
 ANFW-N2SVPC, ANFW-VPC01,02 을 연결할 TGW를 생성합니다. ANFW-N2STGW는 TGW Routing Table과 각 VPC들이 Route Table을 자동으로 구성해 줍니다.
 
@@ -142,7 +123,7 @@ ANFW-N2SVPC, ANFW-VPC01,ANFW-VPC02을 연결하기 위한 TransitGateway를 배�
 aws cloudformation deploy \
   --region ${AWS_REGION} \
   --stack-name "ANFWTGW" \
-  --template-file "/home/ec2-user/environment/gwlb_anfw/anfw/4.ANFW-TGW.yml"
+  --template-file "~/gwlb_anfw/anfw/4.ANFW-TGW.yml"
   
 ```
 
