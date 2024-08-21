@@ -193,36 +193,10 @@ ANFW-VPC01,02 을 Cloudformation을 통해 배포할 때 해당 인스턴스들�
 
 session manager 기반으로 접속하기 위해, 아래 명령을 실행하여 ec2 인스턴스의 id값을 확인합니다.
 
-```
-aws ec2 describe-instances --query 'Reservations[].Instances[].[Tags[?Key==`Name`] | [0].Value, Placement.AvailabilityZone,InstanceId, InstanceType, ImageId,State.Name, PrivateIpAddress, PublicIpAddress ]' --output table --region ${AWS_REGION}
-
-```
-
-```
-### 예
-$ aws ec2 describe-instances --query 'Reservations[].Instances[].[Tags[?Key==`Name`] | [0].Value, Placement.AvailabilityZone,InstanceId, InstanceType, ImageId,State.Name, PrivateIpAddress, PublicIpAddress ]' --output table --region ap-northeast-1
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-|                                                                         DescribeInstances                                                                        |
-+------------------------------------+------------------+----------------------+-----------+------------------------+----------+----------------+------------------+
-|  ANFW-VPC02-Private-B-10.2.22.102  |  ap-northeast-1c |  i-0ca2538a6bd937fa5 |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.2.22.102   |  18.183.127.88   |
-|  ANFW-VPC02-Private-B-10.2.22.101  |  ap-northeast-1c |  i-0ef947bbc040ba658 |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.2.22.101   |  13.231.181.250  |
-|  ANFW-N2SVPC-Private-B-10.11.22.101|  ap-northeast-1c |  i-02a3d7af737b0e344 |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.11.22.101  |  None            |
-|  ANFW-VPC01-Private-B-10.1.22.101  |  ap-northeast-1c |  i-0c75f95edd2692161 |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.1.22.101   |  35.77.101.217   |
-|  ANFW-VPC01-Private-B-10.1.22.102  |  ap-northeast-1c |  i-0102342c91c7cf613 |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.1.22.102   |  35.78.89.45     |
-|  ANFW-N2SVPC-Private-B-10.11.22.102|  ap-northeast-1c |  i-05459544c12ec5fdc |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.11.22.102  |  None            |
-|  ANFW-VPC01-Private-A-10.1.21.102  |  ap-northeast-1a |  i-08118aef0be9573f0 |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.1.21.102   |  18.177.144.50   |
-|  ANFW-VPC02-Private-A-10.2.21.102  |  ap-northeast-1a |  i-0c4dafdf88b772341 |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.2.21.102   |  13.115.162.243  |
-|  ANFW-VPC01-Private-A-10.1.21.101  |  ap-northeast-1a |  i-0640ca12e0368d96a |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.1.21.101   |  18.179.42.219   |
-|  ANFW-N2SVPC-Private-A-10.11.21.101|  ap-northeast-1a |  i-095092b0e70f3c8ec |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.11.21.101  |  None            |
-|  ANFW-N2SVPC-Private-A-10.11.21.102|  ap-northeast-1a |  i-0b427c46ca27f34db |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.11.21.102  |  None            |
-|  ANFW-VPC02-Private-A-10.2.21.101  |  ap-northeast-1a |  i-0f18c2b9cc6c1823f |  t3.small |  ami-0f9a314ce79311c88 |  running |  10.2.21.101   |  54.248.7.64     |
-+------------------------------------+------------------+----------------------+-----------+------------------------+----------+----------------+------------------+
-```
-
 배포된 인스턴스 정보들에 대해 변수로 저장해 두기 위해, 아래 Shell을 실행시킵니다.
 
 ```
-~/environment/gwlb_anfw/anfw/anfw_ec2_shell.sh
+~/gwlb_anfw/anfw/anfw_ec2_shell.sh
 
 ```
 
@@ -279,7 +253,7 @@ AWS의 Resource Group 구성과 System Manager RunBook을 통해서 , Shell을 �
 * **`그룹화 기준 - Cloudformation 스택 : ANFW-VPC01`**
 * **`그룹화 기준 - Cloudformation 스택의 리소스 유형 : AWS::EC2::Instance`**
 * **`그룹리소스 미리보기 선택`**
-* **`그룹 세부 정보 : ANFW-VPC01-Private-Instance`**
+* **`그룹 세부 정보 - 그룹 이름  : ANFW-VPC01-Private-Instance`**
 
 반복해서 VPC02 도 구성합니다.
 
