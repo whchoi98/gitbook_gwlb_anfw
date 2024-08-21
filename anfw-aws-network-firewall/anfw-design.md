@@ -480,15 +480,26 @@ Cloudformation으로 배포된 Network Firewall이 정상적으로 배포되었�
 * EC2 - 네트워크 및 보안 - 네트워크 인터페이스 - ALB-VPC02 -프라이빗 IPv4 확인
 * 검색 키워드
 
+아래 AWS CLI를 code-server 터미널에서 실행하면, "ALB-VPC02" ELB의 내부 IP 주소를 확인 할 수 있습니다.
+
+```
+aws ec2 describe-network-interfaces \
+    --filters "Name=description,Values=*ALB-VPC02*" \
+    --query "NetworkInterfaces[*].PrivateIpAddresses[*].PrivateIpAddress" \
+    --output text
+```
+
 ```
 ALB-VPC02
 ```
+
+AWS 콘솔에서도 확인이 가능합니다.
 
 ![](<../.gitbook/assets/image (212) (1) (1) (1).png>)
 
 Stateless 정책을 생성하고 적용합니다
 
-* VPC - 방화벽 - N2S-firewall-ANFW-N2SVPC - 상태 비저장 규칙 그룹 - 작업 - 무상태 규칙 그룹 생성
+* VPC - 네트워크 방화벽 - 방화벽 정책 - N2S-firewall-ANFW-N2SVPC - 상태 비저장 규칙 그룹 - 작업 - 무상태 규칙 그룹 생성
 
 <figure><img src="../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
 
