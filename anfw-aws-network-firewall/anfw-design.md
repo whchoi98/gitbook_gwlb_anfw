@@ -196,7 +196,9 @@ session manager 기반으로 접속하기 위해, 아래 명령을 실행하여 
 배포된 인스턴스 정보들에 대해 변수로 저장해 두기 위해, 아래 Shell을 실행시킵니다.
 
 ```
+export AWS_REGION=ap-northeast-2
 ~/gwlb_anfw/anfw/anfw_ec2_shell.sh
+source ~/.bash_profile
 
 ```
 
