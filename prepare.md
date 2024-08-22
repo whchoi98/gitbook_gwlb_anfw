@@ -108,6 +108,10 @@ aws cloudformation deploy \
 cloudshell 에서 아래 Shell을 실행시켜, vscode server의 Public IP를 확인하고, VSCode에 접속합니다.
 
 ```
+# AWS_REGION 변수를 설정하고 현재 쉘 세션에서 사용 가능하게 합니다.
+export AWS_REGION=ap-northeast-2
+# bashrc 파일에 AWS_REGION 변수를 영구적으로 추가하여, 모든 새로운 쉘 세션에서도 사용 가능하게 합니다.
+echo 'export AWS_REGION=ap-northeast-2' >> ~/.bashrc
 ~/ec2_vscode/vscode_ip.sh
 
 ```
