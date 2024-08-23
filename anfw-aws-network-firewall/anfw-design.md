@@ -10,7 +10,7 @@ description: 'Update : 2024-06-24 / 2h'
 
 이러한 구성은 VPC Endpoint를 특정 VPC에 구성하고, TransitGateway를 통해 ANFW에 VPC Endpoint Service를 연결하는 중앙집중 구조입니다.
 
-ALB(Application Load Balancer)를 ANFW를 연계하는 VP..C에 배치해서, 내부의 VPC01,02의 서비스들이 외부에 제공하도록 할 수 있습니다
+ALB(Application Load Balancer)를 ANFW를 연계하는 VPC에 배치해서, 내부의 VPC01,02의 서비스들이 외부에 제공하도록 할 수 있습니다.
 
 아래 그림은 목표 구성도 입니다.
 

@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2024.01.27'
+description: 'Update : 2024.08.23'
 ---
 
 # EKS 설치
@@ -13,14 +13,14 @@ description: 'Update : 2024.01.27'
 eks 설치를 위해서 Tool들을 설치해야 합니다. 사전에 github에서 복제 해 둔 shell을 아래와 같이 실행합니다.
 
 ```
-~/environment/useful-shell/eks_tools.sh
+~/gwlb_anfw/anfw/eks_tools.sh
 
 ```
 
 EKS Cluster를 VPC01 에 설치하기 위해 eksctl yaml을 생성합니다.
 
 ```
-~/environment/gwlb_anfw/anfw/eksctl_cluster_2az.sh
+~/gwlb_anfw/anfw/eksctl_cluster_2az.sh
 
 ```
 
@@ -31,7 +31,7 @@ EKS Cluster를 VPC01 에 설치하기 위해 eksctl yaml을 생성합니다.
 생성된 eksctl yaml 로 VPC01에 EKS Cluster를 생성합니다.
 
 ```
-eksctl create cluster --config-file=/home/ec2-user/environment/ekscluster01.yaml
+eksctl create cluster --config-file=/home/ec2-user/ekscluster01.yaml
 
 ```
 
@@ -45,7 +45,7 @@ Amazon EKS Cluster는 설치 시간이 15분 \~20분 소요됩니다.
 
 설치가 왼료되면 Amazon EKS 콘솔에서 정보를 확인하기 위해, 최초 생성한 계정이 정보에 권한을 부여합니다.
 
-Cloud9에서 아래 명령을 복사해서 삽입합니다. 현재 AWS Console에 Login 한 IAM User가 정확한지 확인합니다. 아래 예제에서 User ID는 "user01" 입니다.
+Terminal에서 아래 명령을 복사해서 삽입합니다. 현재 AWS Console에 Login 한 IAM User가 정확한지 확인합니다. 아래 예제에서 User ID는 "user01" 입니다.
 
 ```
 ## USER_ID의 값은 현재 콘솔에서의 user id
