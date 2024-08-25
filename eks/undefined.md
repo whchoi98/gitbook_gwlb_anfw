@@ -37,6 +37,8 @@ AWS Load Balancer Controller의 `kube-system` 네임스페이스에 `aws-load-ba
 
 ```
 export CLUSTER1_NAME="C1"
+export AWS_REGION="ap-northeast-2
+export ACCOUNT_ID=$(aws sts get-caller-identity --region ap-northeast-2 --output text --query Account)
 eksctl create iamserviceaccount \
   --cluster=${CLUSTER1_NAME} \
   --namespace=kube-system \
@@ -87,7 +89,8 @@ kubectl apply -f ~/environment/myeks/network-test/nlb-test-03.yaml
 Sample App에 대한 Service Object를 생성합니다.
 
 ```
-cat <<EoF > ~/environment/myeks/network-test/nlb-test-03-svc.yaml
+kubectl create namespace nlb-test-03
+cat <<EoF > ~/nlb-test-03-svc.yaml
 ---
 apiVersion: v1
 kind: Service
@@ -111,7 +114,7 @@ spec:
       targetPort: 80
 EoF
 
-kubectl apply -f  ~/environment/myeks/network-test/nlb-test-03-svc.yaml
+kubectl apply -f  ~/nlb-test-03-svc.yaml
 
 ```
 
