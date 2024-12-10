@@ -291,7 +291,8 @@ Appliance 구성 정보를 확인해 봅니다.
 
 Cloud9에서 새로운 터미널 4개를 탭에서 추가해서 4개 Appliance를 모두 확인해 봅니다.
 
-<pre><code><strong>aws ssm start-session --target $Appliance_11_101
+<pre><code><strong>source ~/.bash_profile
+</strong><strong>aws ssm start-session --target $Appliance_11_101
 </strong>aws ssm start-session --target $Appliance_11_102
 aws ssm start-session --target $Appliance_12_101
 aws ssm start-session --target $Appliance_12_102
@@ -389,6 +390,7 @@ session manager 명령을 통해 해당 인스턴스에 연결해 봅니다. (�
 
 ```
 #VPC01 10.1.21.101 접속 
+source ~/.bash_profile
 aws ssm start-session --target $VPC01_21_101
 
 ```
