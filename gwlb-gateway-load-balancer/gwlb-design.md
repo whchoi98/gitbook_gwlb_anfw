@@ -147,7 +147,7 @@ aws cloudformation deploy \
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "VPC02" \
-  --template-file "~/gwlb_anfw/gwlb/4.VPC02.yml" \
+  --template-file "~/environment/gwlb_anfw/gwlb/4.VPC02.yml" \
   --capabilities CAPABILITY_NAMED_IAM &
   
 ```
