@@ -56,7 +56,7 @@ Cloud9 터미널에서 AWS CLI의 Cloudformation 명령을 통해 GWLBVPC를 배
 aws cloudformation deploy \
   --region ap-northeast-2 \
   --stack-name "GWLBVPC" \
-  --template-file "~/gwlb_anfw/gwlb/1.GWLBVPC.yml" \
+  --template-file "~/environment/gwlb_anfw/gwlb/1.GWLBVPC.yml" \
   --capabilities CAPABILITY_NAMED_IAM
   
 ```
